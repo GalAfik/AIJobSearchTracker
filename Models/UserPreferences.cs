@@ -11,9 +11,57 @@ namespace JobSearchTracker.Models
         public AppTheme Theme { get; set; } = AppTheme.Light;
 
         /// <summary>
-        /// Gets or sets the user's home address for directions.
+        /// Gets or sets the user's home street address.
         /// </summary>
-        public string HomeAddress { get; set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the user's home city.
+        /// </summary>
+        public string City { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the user's home state/province.
+        /// </summary>
+        public string State { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the user's home ZIP/postal code.
+        /// </summary>
+        public string ZipCode { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the user's home country.
+        /// </summary>
+        public string Country { get; set; } = "United States";
+
+        /// <summary>
+        /// Gets the full home address formatted for Google Maps.
+        /// </summary>
+        public string HomeAddress
+        {
+            get
+            {
+                var parts = new List<string>();
+
+                if (!string.IsNullOrWhiteSpace(Street))
+                    parts.Add(Street);
+
+                if (!string.IsNullOrWhiteSpace(City))
+                    parts.Add(City);
+
+                if (!string.IsNullOrWhiteSpace(State))
+                    parts.Add(State);
+
+                if (!string.IsNullOrWhiteSpace(ZipCode))
+                    parts.Add(ZipCode);
+
+                if (!string.IsNullOrWhiteSpace(Country))
+                    parts.Add(Country);
+
+                return string.Join(", ", parts);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the default job sort option.

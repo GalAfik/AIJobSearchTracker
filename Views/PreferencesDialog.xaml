@@ -1,19 +1,25 @@
 <Window x:Class="JobSearchTracker.Views.PreferencesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Preferences" Height="350" Width="500"
+        Title="Preferences" Height="550" Width="600"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{DynamicResource BackgroundBrush}">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="0,10,0,5"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
         <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        <Style TargetType="PasswordBox">
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
@@ -25,46 +31,179 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <TextBlock Text="Appearance" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                
-                <TextBlock Text="Theme:"/>
-                <ComboBox x:Name="ThemeComboBox" SelectionChanged="ThemeComboBox_SelectionChanged">
-                    <ComboBoxItem Content="Light" Tag="Light"/>
-                    <ComboBoxItem Content="Dark" Tag="Dark"/>
-                </ComboBox>
+        <TabControl Grid.Row="0">
+            <!-- Appearance Tab -->
+            <TabItem Header="Appearance">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="Theme:" FontSize="14"/>
+                        <ComboBox x:Name="ThemeComboBox" SelectionChanged="ThemeComboBox_SelectionChanged">
+                            <ComboBoxItem Content="Light" Tag="Light"/>
+                            <ComboBoxItem Content="Dark" Tag="Dark"/>
+                        </ComboBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                <Separator Margin="0,10"/>
+            <!-- Directions Tab -->
+            <TabItem Header="Directions">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="Home Address:" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            This address will be used as the starting point when getting directions to job locations.
+                        </TextBlock>
 
-                <TextBlock Text="Directions" FontSize="16" FontWeight="Bold" Margin="0,10,0,10"/>
-                
-                <TextBlock Text="Home Address:"/>
-                <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,5" FontSize="11" Foreground="Gray">
-                    This address will be used as the starting point when getting directions to job locations.
-                </TextBlock>
-                <TextBox x:Name="HomeAddressTextBox" 
-                         TextWrapping="Wrap"
-                         AcceptsReturn="True"
-                         Height="80"
-                         VerticalScrollBarVisibility="Auto"/>
+                        <TextBlock Text="Street Address:" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBox x:Name="StreetTextBox" 
+                                 Style="{DynamicResource ModernTextBox}"
+                                 Margin="0,0,0,10"/>
 
-                <Separator Margin="0,10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Default Sorting" FontSize="16" FontWeight="Bold" Margin="0,10,0,10"/>
-                
-                <TextBlock Text="Sort Jobs By:"/>
-                <ComboBox x:Name="SortByComboBox">
-                    <ComboBoxItem Content="Date Added (Newest)"/>
-                    <ComboBoxItem Content="Date Added (Oldest)"/>
-                    <ComboBoxItem Content="Company Name (A-Z)"/>
-                    <ComboBoxItem Content="Company Name (Z-A)"/>
-                    <ComboBoxItem Content="Date Applied (Newest)"/>
-                    <ComboBoxItem Content="Date Applied (Oldest)"/>
-                    <ComboBoxItem Content="Status"/>
-                </ComboBox>
-            </StackPanel>
-        </ScrollViewer>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="City:" FontSize="12" Margin="0,0,0,5"/>
+                                <TextBox x:Name="CityTextBox" 
+                                         Style="{DynamicResource ModernTextBox}"
+                                         Margin="0,0,0,10"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="State:" FontSize="12" Margin="0,0,0,5"/>
+                                <TextBox x:Name="StateTextBox" 
+                                         Style="{DynamicResource ModernTextBox}"
+                                         Margin="0,0,0,10"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="ZIP Code:" FontSize="12" Margin="0,0,0,5"/>
+                                <TextBox x:Name="ZipCodeTextBox" 
+                                         Style="{DynamicResource ModernTextBox}"
+                                         Margin="0,0,0,10"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Country:" FontSize="12" Margin="0,0,0,5"/>
+                                <TextBox x:Name="CountryTextBox" 
+                                         Text="United States"
+                                         Style="{DynamicResource ModernTextBox}"
+                                         Margin="0,0,0,10"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Background="{DynamicResource HighlightBrush}" 
+                                BorderBrush="{DynamicResource AccentBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="4" 
+                                Padding="10" 
+                                Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="📍 Preview" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource AccentBrush}"/>
+                                <TextBlock x:Name="AddressPreviewTextBlock" 
+                                           FontWeight="Normal" 
+                                           TextWrapping="Wrap" 
+                                           FontSize="11" 
+                                           Foreground="{DynamicResource PrimaryTextBrush}" 
+                                           Margin="0,5,0,0"
+                                           Text="Enter your address to see preview"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Sorting Tab -->
+            <TabItem Header="Sorting">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="Default Sort Order:" FontSize="14"/>
+                        <ComboBox x:Name="SortByComboBox">
+                            <ComboBoxItem Content="Date Added (Newest)"/>
+                            <ComboBoxItem Content="Date Added (Oldest)"/>
+                            <ComboBoxItem Content="Company Name (A-Z)"/>
+                            <ComboBoxItem Content="Company Name (Z-A)"/>
+                            <ComboBoxItem Content="Date Applied (Newest)"/>
+                            <ComboBoxItem Content="Date Applied (Oldest)"/>
+                            <ComboBoxItem Content="Status"/>
+                        </ComboBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- AI Configuration Tab -->
+            <TabItem Header="🤖 AI Configuration">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="AI API Keys" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Configure your AI API keys to enable automatic job scraping from URLs. Your keys are stored locally and securely.
+                        </TextBlock>
+
+                        <!-- Claude API Key -->
+                        <TextBlock Text="Claude (Anthropic) API Key:" FontSize="13"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,5" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Get your API key from: https://console.anthropic.com/
+                        </TextBlock>
+                        <PasswordBox x:Name="ClaudeApiKeyBox" 
+                                     PasswordChanged="ApiKeyBox_PasswordChanged"
+                                     Tag="Claude"/>
+
+                        <!-- OpenAI API Key -->
+                        <TextBlock Text="ChatGPT (OpenAI) API Key:" FontSize="13" Margin="0,10,0,5"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,5" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Get your API key from: https://platform.openai.com/api-keys
+                        </TextBlock>
+                        <PasswordBox x:Name="OpenAiApiKeyBox" 
+                                     PasswordChanged="ApiKeyBox_PasswordChanged"
+                                     Tag="OpenAI"/>
+
+                        <!-- Gemini API Key -->
+                        <TextBlock Text="Gemini (Google) API Key:" FontSize="13" Margin="0,10,0,5"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,5" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Get your API key from: https://makersuite.google.com/app/apikey
+                        </TextBlock>
+                        <PasswordBox x:Name="GeminiApiKeyBox" 
+                                     PasswordChanged="ApiKeyBox_PasswordChanged"
+                                     Tag="Gemini"/>
+
+                        <!-- Preferred AI Provider -->
+                        <TextBlock Text="Preferred AI Provider:" FontSize="13" Margin="0,15,0,5"/>
+                        <ComboBox x:Name="PreferredAiProviderComboBox">
+                            <ComboBoxItem Content="Claude (Anthropic)" Tag="Claude" IsSelected="True"/>
+                            <ComboBoxItem Content="ChatGPT (OpenAI)" Tag="OpenAI"/>
+                            <ComboBoxItem Content="Gemini (Google)" Tag="Gemini"/>
+                        </ComboBox>
+
+                        <Border Background="{DynamicResource HighlightBrush}" 
+                                BorderBrush="{DynamicResource AccentBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="4" 
+                                Padding="10" 
+                                Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock Text="💡 Pro Tip" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource AccentBrush}"/>
+                                <TextBlock FontWeight="Normal" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,5,0,0">
+                                    You only need to configure one AI provider. Each provider has different pricing and capabilities. Claude and ChatGPT are recommended for best results.
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Content="Save" Width="80" Height="30" Margin="0,0,10,0" Click="SaveButton_Click" IsDefault="True"/>

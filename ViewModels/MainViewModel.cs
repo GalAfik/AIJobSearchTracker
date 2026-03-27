@@ -45,6 +45,7 @@ namespace JobSearchTracker.ViewModels
             SaveProjectAsCommand = new RelayCommand(_ => SaveProjectAs(), _ => _currentProject != null);
             ExportToExcelCommand = new RelayCommand(_ => ExportToExcel(), _ => _currentProject != null);
             AddJobCommand = new RelayCommand(_ => AddJob(), _ => _currentProject != null);
+            AddJobFromUrlCommand = new RelayCommand(_ => AddJobFromUrl(), _ => _currentProject != null);
             EditJobCommand = new RelayCommand(_ => EditJob(), _ => SelectedJob != null);
             DeleteJobCommand = new RelayCommand(_ => DeleteJob(), _ => SelectedJob != null);
             ApplyFilterCommand = new RelayCommand(_ => ApplyFilter());
@@ -111,6 +112,7 @@ namespace JobSearchTracker.ViewModels
         public RelayCommand SaveProjectAsCommand { get; }
         public RelayCommand ExportToExcelCommand { get; }
         public RelayCommand AddJobCommand { get; }
+        public RelayCommand AddJobFromUrlCommand { get; }
         public RelayCommand EditJobCommand { get; }
         public RelayCommand DeleteJobCommand { get; }
         public RelayCommand ApplyFilterCommand { get; }
@@ -248,13 +250,43 @@ namespace JobSearchTracker.ViewModels
 
             var newJob = new Job();
             var dialog = new Views.JobDialog(newJob);
-            
+
             if (dialog.ShowDialog() == true)
             {
                 _currentProject.Jobs.Add(newJob);
                 var jobViewModel = new JobViewModel(newJob);
                 Jobs.Add(jobViewModel);
                 ApplyFilter();
+            }
+        }
+
+        private void AddJobFromUrl()
+        {
+            if (_currentProject == null)
+                return;
+
+            var dialog = new Views.AddJobFromUrlDialog(UserPreferences);
+
+            if (dialog.ShowDialog() == true && dialog.ScrapedJob != null)
+            {
+                _currentProject.Jobs.Add(dialog.ScrapedJob);
+                var jobViewModel = new JobViewModel(dialog.ScrapedJob);
+                Jobs.Add(jobViewModel);
+                ApplyFilter();
+
+                // Optionally, allow the user to edit the scraped job
+                var result = MessageBox.Show(
+                    "Would you like to review and edit the job details?",
+                    "Edit Job",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    SelectedJob = jobViewModel;
+                    EditJob();
+                }
             }
         }
 

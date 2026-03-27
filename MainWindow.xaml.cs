@@ -141,5 +141,174 @@ namespace JobSearchTracker
                 MessageBox.Show("Failed to open URL.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // Inline Editing Event Handlers
+
+        private void SaveJobButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.SelectedJob == null)
+                return;
+
+            // The bindings are already updating the model, so just notify user
+            MessageBox.Show("Job changes saved successfully!", "Saved", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ReloadJobButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.SelectedJob == null)
+                return;
+
+            var currentJob = _viewModel.SelectedJob;
+            _viewModel.SelectedJob = null;
+            _viewModel.SelectedJob = currentJob;
+
+            MessageBox.Show("Job data reloaded.", "Reloaded", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void OpenJobUrlButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.SelectedJob == null || string.IsNullOrWhiteSpace(_viewModel.SelectedJob.JobUrl))
+                return;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = _viewModel.SelectedJob.JobUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch
+            {
+                MessageBox.Show("Failed to open URL.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Interview Management
+
+        private void AddInterviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.SelectedJob == null)
+                return;
+
+            var newInterview = new Interview();
+            var dialog = new Views.InterviewDialog(newInterview);
+
+            if (dialog.ShowDialog() == true)
+            {
+                _viewModel.SelectedJob.Model.Interviews.Add(newInterview);
+                _viewModel.SelectedJob.Interviews.Add(new InterviewViewModel(newInterview));
+            }
+        }
+
+        private void InterviewsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (InterviewsListView.SelectedItem is InterviewViewModel interviewVM)
+            {
+                var dialog = new Views.InterviewDialog(interviewVM.Model);
+                if (dialog.ShowDialog() == true)
+                {
+                    // Refresh the view
+                    var index = _viewModel.SelectedJob.Interviews.IndexOf(interviewVM);
+                    _viewModel.SelectedJob.Interviews[index] = new InterviewViewModel(interviewVM.Model);
+                }
+            }
+        }
+
+        private void EditInterviewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (InterviewsListView.SelectedItem is InterviewViewModel interviewVM)
+            {
+                var dialog = new Views.InterviewDialog(interviewVM.Model);
+                if (dialog.ShowDialog() == true)
+                {
+                    var index = _viewModel.SelectedJob.Interviews.IndexOf(interviewVM);
+                    _viewModel.SelectedJob.Interviews[index] = new InterviewViewModel(interviewVM.Model);
+                }
+            }
+        }
+
+        private void DeleteInterviewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (InterviewsListView.SelectedItem is InterviewViewModel interviewVM)
+            {
+                var result = MessageBox.Show(
+                    "Are you sure you want to delete this interview?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    _viewModel.SelectedJob.Model.Interviews.Remove(interviewVM.Model);
+                    _viewModel.SelectedJob.Interviews.Remove(interviewVM);
+                }
+            }
+        }
+
+        // Contact Management
+
+        private void AddContactButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.SelectedJob == null)
+                return;
+
+            var newContact = new Contact();
+            var dialog = new Views.ContactDialog(newContact);
+
+            if (dialog.ShowDialog() == true)
+            {
+                _viewModel.SelectedJob.Model.Contacts.Add(newContact);
+                _viewModel.SelectedJob.Contacts.Add(new ContactViewModel(newContact));
+            }
+        }
+
+        private void ContactsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ContactsListView.SelectedItem is ContactViewModel contactVM)
+            {
+                var dialog = new Views.ContactDialog(contactVM.Model);
+                if (dialog.ShowDialog() == true)
+                {
+                    var index = _viewModel.SelectedJob.Contacts.IndexOf(contactVM);
+                    _viewModel.SelectedJob.Contacts[index] = new ContactViewModel(contactVM.Model);
+                }
+            }
+        }
+
+        private void EditContactMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (ContactsListView.SelectedItem is ContactViewModel contactVM)
+            {
+                var dialog = new Views.ContactDialog(contactVM.Model);
+                if (dialog.ShowDialog() == true)
+                {
+                    var index = _viewModel.SelectedJob.Contacts.IndexOf(contactVM);
+                    _viewModel.SelectedJob.Contacts[index] = new ContactViewModel(contactVM.Model);
+                }
+            }
+        }
+
+        private void DeleteContactMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (ContactsListView.SelectedItem is ContactViewModel contactVM)
+            {
+                var result = MessageBox.Show(
+                    "Are you sure you want to delete this contact?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    _viewModel.SelectedJob.Model.Contacts.Remove(contactVM.Model);
+                    _viewModel.SelectedJob.Contacts.Remove(contactVM);
+                }
+            }
+        }
     }
 }

@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JobSearchTracker"
+        xmlns:models="clr-namespace:JobSearchTracker.Models"
         mc:Ignorable="d"
         Title="Job Search Tracker" Height="850" Width="1400"
+        MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BackgroundBrush}">
 
@@ -31,6 +33,7 @@
             </MenuItem>
             <MenuItem Header="_Job" Foreground="{DynamicResource PrimaryTextBrush}">
                 <MenuItem Header="_Add Job" Command="{Binding AddJobCommand}"/>
+                <MenuItem Header="🤖 Add Job from URL (AI)" Command="{Binding AddJobFromUrlCommand}"/>
                 <MenuItem Header="_Edit Job" Command="{Binding EditJobCommand}"/>
                 <MenuItem Header="_Delete Job" Command="{Binding DeleteJobCommand}"/>
             </MenuItem>
@@ -48,6 +51,7 @@
             <Button Content="💾 Save" Command="{Binding SaveProjectCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
             <Separator Margin="5,0"/>
             <Button Content="➕ Add Job" Command="{Binding AddJobCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
+            <Button Content="🤖 AI Add" Command="{Binding AddJobFromUrlCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0" ToolTip="Add job from URL using AI"/>
             <Button Content="✏️ Edit Job" Command="{Binding EditJobCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
             <Button Content="🗑️ Delete Job" Command="{Binding DeleteJobCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
             <Separator Margin="5,0"/>
@@ -179,19 +183,46 @@
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="{DynamicResource BorderBrush}"/>
 
-            <!-- Right Panel - Job Details -->
+            <!-- Right Panel - Job Details (Inline Editing) -->
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-                    <TextBlock Text="📄 Job Details" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                </StackPanel>
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="📄 Job Details" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" x:Name="EditButtonsPanel">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedJob}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Button Content="💾 Save Changes" 
+                                Click="SaveJobButton_Click"
+                                Style="{DynamicResource ModernButton}" 
+                                Padding="10,5" 
+                                Margin="0,0,10,0"/>
+                        <Button Content="🔄 Reload" 
+                                Click="ReloadJobButton_Click"
+                                Style="{DynamicResource ModernButton}" 
+                                Padding="10,5"/>
+                    </StackPanel>
+                </Grid>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel DataContext="{Binding SelectedJob}">
+                    <StackPanel DataContext="{Binding SelectedJob}" x:Name="JobDetailsPanel">
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Style.Triggers>
@@ -202,7 +233,7 @@
                             </Style>
                         </StackPanel.Style>
 
-                        <!-- Basic Information -->
+                        <!-- Basic Information (Editable) -->
                         <GroupBox Header="📋 Basic Information" Margin="0,0,0,15" Padding="15" Style="{DynamicResource ModernGroupBox}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -221,81 +252,161 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Company:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CompanyName}" Margin="0,8" Foreground="{DynamicResource PrimaryTextBrush}" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Company:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}" Margin="0,8" Style="{DynamicResource ModernTextBox}"/>
 
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Job Title:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobTitle}" Margin="0,8" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Job Title:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding JobTitle, UpdateSourceTrigger=PropertyChanged}" Margin="0,8" Style="{DynamicResource ModernTextBox}"/>
 
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Location:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,8">
-                                    <TextBlock Text="{Binding Location}" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
-                                    <Button Content="🗺️ Directions" 
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Location:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,8">
+                                    <Button Content="🗺️" 
                                             Command="{Binding DataContext.GetDirectionsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             Style="{DynamicResource ModernButton}"
+                                            DockPanel.Dock="Right"
                                             Margin="10,0,0,0"
                                             Padding="8,4"
+                                            ToolTip="Get Directions"
                                             FontSize="11"/>
-                                </StackPanel>
+                                    <TextBox Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource ModernTextBox}"/>
+                                </DockPanel>
 
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <Border Grid.Row="3" Grid.Column="1" 
-                                        Background="{DynamicResource AccentBrush}" 
-                                        CornerRadius="4" 
-                                        Padding="8,4" 
-                                        HorizontalAlignment="Left"
-                                        Margin="0,8">
-                                    <TextBlock Text="{Binding Status}" Foreground="White" FontWeight="SemiBold"/>
-                                </Border>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Row="3" Grid.Column="1" 
+                                          SelectedItem="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                                          Margin="0,8"
+                                          Style="{DynamicResource ModernComboBox}">
+                                    <x:Static Member="models:JobStatus.NotApplied"/>
+                                    <x:Static Member="models:JobStatus.Applied"/>
+                                    <x:Static Member="models:JobStatus.Interviewed"/>
+                                    <x:Static Member="models:JobStatus.Offered"/>
+                                    <x:Static Member="models:JobStatus.Accepted"/>
+                                    <x:Static Member="models:JobStatus.Rejected"/>
+                                    <x:Static Member="models:JobStatus.Withdrawn"/>
+                                </ComboBox>
 
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Date Applied:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding DateApplied, StringFormat='MM/dd/yyyy'}" Margin="0,8" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Date Applied:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <DatePicker Grid.Row="4" Grid.Column="1" 
+                                            SelectedDate="{Binding DateApplied, UpdateSourceTrigger=PropertyChanged}" 
+                                            Margin="0,8"
+                                            Padding="5"/>
 
-                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Platform:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ApplicationPlatform}" Margin="0,8" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Platform:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Row="5" Grid.Column="1" 
+                                          SelectedItem="{Binding ApplicationPlatform, UpdateSourceTrigger=PropertyChanged}"
+                                          Margin="0,8"
+                                          Style="{DynamicResource ModernComboBox}">
+                                    <x:Static Member="models:ApplicationPlatform.LinkedInEasyApply"/>
+                                    <x:Static Member="models:ApplicationPlatform.Indeed"/>
+                                    <x:Static Member="models:ApplicationPlatform.Glassdoor"/>
+                                    <x:Static Member="models:ApplicationPlatform.ZipRecruiter"/>
+                                    <x:Static Member="models:ApplicationPlatform.Handshake"/>
+                                    <x:Static Member="models:ApplicationPlatform.CompanyWebsite"/>
+                                    <x:Static Member="models:ApplicationPlatform.Referral"/>
+                                    <x:Static Member="models:ApplicationPlatform.Other"/>
+                                </ComboBox>
 
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Salary Range:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SalaryRange}" Margin="0,8" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Salary Range:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SalaryRange, UpdateSourceTrigger=PropertyChanged}" Margin="0,8" Style="{DynamicResource ModernTextBox}"/>
 
-                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Job URL:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                <TextBlock Grid.Row="7" Grid.Column="1" Margin="0,8">
-                                    <Hyperlink NavigateUri="{Binding JobUrl}" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{DynamicResource AccentBrush}">
-                                        <TextBlock Text="{Binding JobUrl}" TextTrimming="CharacterEllipsis"/>
-                                    </Hyperlink>
-                                </TextBlock>
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Job URL:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                                <DockPanel Grid.Row="7" Grid.Column="1" Margin="0,8">
+                                    <Button Content="🔗" 
+                                            Click="OpenJobUrlButton_Click"
+                                            Style="{DynamicResource ModernButton}"
+                                            DockPanel.Dock="Right"
+                                            Margin="10,0,0,0"
+                                            Padding="8,4"
+                                            ToolTip="Open URL"
+                                            FontSize="11"/>
+                                    <TextBox Text="{Binding JobUrl, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource ModernTextBox}"/>
+                                </DockPanel>
+
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Description:" FontWeight="SemiBold" Margin="0,8" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Top"/>
+                                <TextBox Grid.Row="8" Grid.Column="1" 
+                                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
+                                         Margin="0,8" 
+                                         Style="{DynamicResource ModernTextBox}"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         MinHeight="60"
+                                         MaxHeight="120"
+                                         VerticalScrollBarVisibility="Auto"/>
                             </Grid>
                         </GroupBox>
 
-                        <!-- Notes -->
+                        <!-- Notes (Editable) -->
                         <GroupBox Header="📝 Notes" Margin="0,0,0,15" Padding="15" Style="{DynamicResource ModernGroupBox}">
-                            <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{DynamicResource ModernTextBox}"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     MinHeight="80"
+                                     MaxHeight="200"
+                                     VerticalScrollBarVisibility="Auto"/>
                         </GroupBox>
 
-                        <!-- Interviews -->
+                        <!-- Interviews (Inline Management) -->
                         <GroupBox Header="💼 Interviews" Margin="0,0,0,15" Padding="15" Style="{DynamicResource ModernGroupBox}">
-                            <ListView ItemsSource="{Binding Interviews}" Background="Transparent" BorderThickness="0">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Round" Width="60" DisplayMemberBinding="{Binding Round}"/>
-                                        <GridViewColumn Header="Type" Width="100" DisplayMemberBinding="{Binding InterviewType}"/>
-                                        <GridViewColumn Header="Date/Time" Width="140" DisplayMemberBinding="{Binding InterviewDateTime, StringFormat='MM/dd/yyyy HH:mm'}"/>
-                                        <GridViewColumn Header="Interviewer" Width="150" DisplayMemberBinding="{Binding InterviewerName}"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                            <StackPanel>
+                                <Button Content="➕ Add Interview" 
+                                        Click="AddInterviewButton_Click"
+                                        Style="{DynamicResource ModernButton}" 
+                                        HorizontalAlignment="Right"
+                                        Padding="10,5" 
+                                        Margin="0,0,0,10"/>
+                                <ListView ItemsSource="{Binding Interviews}" 
+                                          x:Name="InterviewsListView"
+                                          Background="Transparent" 
+                                          BorderThickness="0"
+                                          MouseDoubleClick="InterviewsListView_MouseDoubleClick">
+                                    <ListView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Edit Interview" Click="EditInterviewMenuItem_Click"/>
+                                            <MenuItem Header="Delete Interview" Click="DeleteInterviewMenuItem_Click"/>
+                                        </ContextMenu>
+                                    </ListView.ContextMenu>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Round" Width="60" DisplayMemberBinding="{Binding Round}"/>
+                                            <GridViewColumn Header="Type" Width="100" DisplayMemberBinding="{Binding InterviewType}"/>
+                                            <GridViewColumn Header="Date/Time" Width="140" DisplayMemberBinding="{Binding InterviewDateTime, StringFormat='MM/dd/yyyy HH:mm'}"/>
+                                            <GridViewColumn Header="Interviewer" Width="150" DisplayMemberBinding="{Binding InterviewerName}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
                         </GroupBox>
 
-                        <!-- Contacts -->
+                        <!-- Contacts (Inline Management) -->
                         <GroupBox Header="👤 Contacts" Margin="0,0,0,15" Padding="15" Style="{DynamicResource ModernGroupBox}">
-                            <ListView ItemsSource="{Binding Contacts}" Background="Transparent" BorderThickness="0">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
-                                        <GridViewColumn Header="Email" Width="200" DisplayMemberBinding="{Binding Email}"/>
-                                        <GridViewColumn Header="Position" Width="150" DisplayMemberBinding="{Binding Position}"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                            <StackPanel>
+                                <Button Content="➕ Add Contact" 
+                                        Click="AddContactButton_Click"
+                                        Style="{DynamicResource ModernButton}" 
+                                        HorizontalAlignment="Right"
+                                        Padding="10,5" 
+                                        Margin="0,0,0,10"/>
+                                <ListView ItemsSource="{Binding Contacts}" 
+                                          x:Name="ContactsListView"
+                                          Background="Transparent" 
+                                          BorderThickness="0"
+                                          MouseDoubleClick="ContactsListView_MouseDoubleClick">
+                                    <ListView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Edit Contact" Click="EditContactMenuItem_Click"/>
+                                            <MenuItem Header="Delete Contact" Click="DeleteContactMenuItem_Click"/>
+                                        </ContextMenu>
+                                    </ListView.ContextMenu>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                                            <GridViewColumn Header="Email" Width="200" DisplayMemberBinding="{Binding Email}"/>
+                                            <GridViewColumn Header="Position" Width="150" DisplayMemberBinding="{Binding Position}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
                         </GroupBox>
                     </StackPanel>
                 </ScrollViewer>
@@ -331,8 +442,8 @@
                        Foreground="{DynamicResource SecondaryTextBrush}" 
                        FontSize="11">
                 <Run Text="© 2024"/>
-                <Run Text="Gal Afik" FontWeight="SemiBold"/>
-                <Run Text="• Job Search Tracker • All Rights Reserved"/>
+                <Run Text=" Gal Afik" FontWeight="SemiBold"/>
+                <Run Text=" • Job Search Tracker • All Rights Reserved"/>
             </TextBlock>
         </Border>
     </Grid>
