@@ -361,3 +361,30 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+##########################
+# Personal/Internal Files
+# (Not for public repository)
+##########################
+
+# Marketing and launch materials
+LINKEDIN_MARKETING.md
+DEPLOYMENT_GUIDE.md
+QUICK_DEPLOYMENT_CHECKLIST.md
+LAUNCH_READY.md
+
+# Internal documentation
+FINAL_PROJECT_SUMMARY.md
+DEVELOPMENT_SUMMARY.md
+VERIFICATION_REPORT.md
+UPDATE_SUMMARY.md
+BUGFIX_*.md
+
+# Keep these for users:
+# README.md - Main repository readme (KEEP)
+# USER_README.md - User documentation (KEEP)
+# AI_FEATURE_GUIDE.md - AI setup guide (KEEP)
+# GITHUB_SPONSORS_SETUP.md - Sponsors guide (OPTIONAL - uncomment next line to exclude)
+# GITHUB_SPONSORS_SETUP.md
+# SPONSOR_PROFILE_TEMPLATE.md - Sponsor profile template (OPTIONAL - uncomment next line to exclude)
+# SPONSOR_PROFILE_TEMPLATE.md

@@ -1,0 +1,189 @@
+{
+  "ProjectName": "My Job Search 2026",
+  "CreatedDate": "2026-01-15T10:30:00",
+  "LastModifiedDate": "2026-01-20T14:45:00",
+  "Jobs": [
+    {
+      "Id": "550e8400-e29b-41d4-a716-446655440001",
+      "CompanyName": "TechCorp Solutions",
+      "JobTitle": "Senior Software Engineer",
+      "Location": "Seattle, WA",
+      "Status": "Interviewed",
+      "DateApplied": "2026-01-10T00:00:00",
+      "ApplicationPlatform": "LinkedInEasyApply",
+      "SalaryRange": "$120,000 - $160,000",
+      "JobUrl": "https://example.com/jobs/senior-software-engineer",
+      "Description": "Exciting opportunity to work on cutting-edge cloud technologies. Build scalable microservices using .NET and Azure. Collaborate with a talented team on innovative projects.",
+      "Notes": "Great culture fit. Met the hiring manager at a meetup last month. Follow up on Friday.",
+      "DateAdded": "2026-01-10T09:15:00",
+      "Interviews": [
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440002",
+          "InterviewerName": "Sarah Johnson",
+          "InterviewerEmail": "sarah.johnson@techcorp.com",
+          "InterviewDateTime": "2026-01-18T14:00:00",
+          "InterviewType": "Phone Screen",
+          "Round": 1,
+          "Notes": "Discussed background and interest in the role. Very positive conversation.",
+          "Outcome": "Moved to next round"
+        },
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440003",
+          "InterviewerName": "Mike Chen",
+          "InterviewerEmail": "mike.chen@techcorp.com",
+          "InterviewDateTime": "2026-01-22T10:00:00",
+          "InterviewType": "Technical",
+          "Round": 2,
+          "Notes": "Technical assessment scheduled. Focus on system design and coding.",
+          "Outcome": ""
+        }
+      ],
+      "Contacts": [
+        {
+          "Id": "770e8400-e29b-41d4-a716-446655440004",
+          "Name": "Sarah Johnson",
+          "Email": "sarah.johnson@techcorp.com",
+          "Phone": "(206) 555-0123",
+          "Position": "Senior Technical Recruiter",
+          "Notes": "Very responsive and helpful. Sends updates regularly.",
+          "LinkedInProfile": "https://linkedin.com/in/sarahjohnson"
+        }
+      ]
+    },
+    {
+      "Id": "550e8400-e29b-41d4-a716-446655440005",
+      "CompanyName": "InnovateLabs",
+      "JobTitle": "Full Stack Developer",
+      "Location": "San Francisco, CA",
+      "Status": "Applied",
+      "DateApplied": "2026-01-15T00:00:00",
+      "ApplicationPlatform": "CompanyWebsite",
+      "SalaryRange": "$110,000 - $150,000",
+      "JobUrl": "https://example.com/careers/fullstack-developer",
+      "Description": "Join our startup building the next generation of productivity tools. Work with React, Node.js, and modern cloud infrastructure.",
+      "Notes": "Startup with Series A funding. Flexible work arrangements. Applied through company website.",
+      "DateAdded": "2026-01-15T16:30:00",
+      "Interviews": [],
+      "Contacts": []
+    },
+    {
+      "Id": "550e8400-e29b-41d4-a716-446655440006",
+      "CompanyName": "Global Finance Corp",
+      "JobTitle": "Software Development Engineer",
+      "Location": "New York, NY",
+      "Status": "Rejected",
+      "DateApplied": "2026-01-08T00:00:00",
+      "ApplicationPlatform": "Indeed",
+      "SalaryRange": "$130,000 - $170,000",
+      "JobUrl": "https://example.com/jobs/sde-position",
+      "Description": "Build and maintain trading platform systems. Work with high-performance computing and real-time data processing.",
+      "Notes": "Received rejection email on 1/16. Position filled internally. Good learning experience.",
+      "DateAdded": "2026-01-08T11:20:00",
+      "Interviews": [
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440007",
+          "InterviewerName": "David Smith",
+          "InterviewerEmail": "david.smith@globalfinance.com",
+          "InterviewDateTime": "2026-01-12T15:00:00",
+          "InterviewType": "Phone Screen",
+          "Round": 1,
+          "Notes": "Initial screening call. Discussed technical skills and experience.",
+          "Outcome": "Not selected to move forward"
+        }
+      ],
+      "Contacts": [
+        {
+          "Id": "770e8400-e29b-41d4-a716-446655440008",
+          "Name": "David Smith",
+          "Email": "david.smith@globalfinance.com",
+          "Phone": "",
+          "Position": "Recruiter",
+          "Notes": "Provided feedback after rejection. Encouraged to apply for future positions.",
+          "LinkedInProfile": ""
+        }
+      ]
+    },
+    {
+      "Id": "550e8400-e29b-41d4-a716-446655440009",
+      "CompanyName": "CloudNine Technologies",
+      "JobTitle": "Backend Engineer",
+      "Location": "Austin, TX",
+      "Status": "Offered",
+      "DateApplied": "2026-01-05T00:00:00",
+      "ApplicationPlatform": "Referral",
+      "SalaryRange": "$115,000 - $145,000",
+      "JobUrl": "https://example.com/careers/backend-engineer",
+      "Description": "Build scalable backend services for our SaaS platform. Work with Python, PostgreSQL, and Kubernetes.",
+      "Notes": "Referred by former colleague. Received offer on 1/19! Negotiating compensation. Decision deadline: 1/25.",
+      "DateAdded": "2026-01-05T14:00:00",
+      "Interviews": [
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440010",
+          "InterviewerName": "Emily Rodriguez",
+          "InterviewerEmail": "emily.rodriguez@cloudnine.com",
+          "InterviewDateTime": "2026-01-08T11:00:00",
+          "InterviewType": "Video",
+          "Round": 1,
+          "Notes": "Great conversation about team culture and engineering practices.",
+          "Outcome": "Advanced to technical round"
+        },
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440011",
+          "InterviewerName": "James Park",
+          "InterviewerEmail": "james.park@cloudnine.com",
+          "InterviewDateTime": "2026-01-12T13:00:00",
+          "InterviewType": "Technical",
+          "Round": 2,
+          "Notes": "Coding challenge and system design. Went very well!",
+          "Outcome": "Advanced to final round"
+        },
+        {
+          "Id": "660e8400-e29b-41d4-a716-446655440012",
+          "InterviewerName": "Lisa Chen",
+          "InterviewerEmail": "lisa.chen@cloudnine.com",
+          "InterviewDateTime": "2026-01-16T10:00:00",
+          "InterviewType": "In-Person",
+          "Round": 3,
+          "Notes": "Final round with VP of Engineering. Team lunch and office tour. Loved the team!",
+          "Outcome": "Received offer"
+        }
+      ],
+      "Contacts": [
+        {
+          "Id": "770e8400-e29b-41d4-a716-446655440013",
+          "Name": "Emily Rodriguez",
+          "Email": "emily.rodriguez@cloudnine.com",
+          "Phone": "(512) 555-0199",
+          "Position": "Engineering Manager",
+          "Notes": "Would be my direct manager. Very supportive and knowledgeable.",
+          "LinkedInProfile": "https://linkedin.com/in/emilyrodriguez"
+        },
+        {
+          "Id": "770e8400-e29b-41d4-a716-446655440014",
+          "Name": "Lisa Chen",
+          "Email": "lisa.chen@cloudnine.com",
+          "Phone": "",
+          "Position": "VP of Engineering",
+          "Notes": "Impressive technical vision. Great leadership style.",
+          "LinkedInProfile": "https://linkedin.com/in/lisachen"
+        }
+      ]
+    },
+    {
+      "Id": "550e8400-e29b-41d4-a716-446655440015",
+      "CompanyName": "DataVision Analytics",
+      "JobTitle": "Machine Learning Engineer",
+      "Location": "Boston, MA",
+      "Status": "NotApplied",
+      "DateApplied": null,
+      "ApplicationPlatform": "Glassdoor",
+      "SalaryRange": "$125,000 - $165,000",
+      "JobUrl": "https://example.com/careers/ml-engineer",
+      "Description": "Apply ML/AI to solve complex business problems. Work with large datasets and cutting-edge algorithms.",
+      "Notes": "Saved for later. Need to tailor resume to emphasize ML experience. Application deadline: 1/31.",
+      "DateAdded": "2026-01-18T09:45:00",
+      "Interviews": [],
+      "Contacts": []
+    }
+  ]
+}

@@ -117,7 +117,12 @@
                 <MenuItem Header="_Delete Job" Command="{Binding DeleteJobCommand}"/>
             </MenuItem>
             <MenuItem Header="_Help" Foreground="{DynamicResource PrimaryTextBrush}">
+                <MenuItem Header="📊 _Analytics" Click="AnalyticsMenuItem_Click"/>
+                <Separator/>
                 <MenuItem Header="_Preferences" Click="PreferencesMenuItem_Click"/>
+                <Separator/>
+                <MenuItem Header="🐛 _Report a Bug" Click="ReportBugMenuItem_Click"/>
+                <MenuItem Header="❤️ _Sponsor this Project" Click="SponsorButton_Click"/>
                 <Separator/>
                 <MenuItem Header="_About" Click="AboutMenuItem_Click"/>
             </MenuItem>
@@ -489,13 +494,62 @@
                 BorderBrush="{DynamicResource BorderBrush}" 
                 BorderThickness="0,1,0,0" 
                 Padding="15,8">
-            <TextBlock HorizontalAlignment="Center" 
-                       Foreground="{DynamicResource SecondaryTextBrush}" 
-                       FontSize="11">
-                <Run Text="© 2026"/>
-                <Run Text=" Gal Afik" FontWeight="SemiBold"/>
-                <Run Text=" • Job Search Tracker • All Rights Reserved"/>
-            </TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Copyright Info -->
+                <TextBlock Grid.Column="1" 
+                           HorizontalAlignment="Center" 
+                           Foreground="{DynamicResource SecondaryTextBrush}" 
+                           FontSize="11">
+                    <Run Text="© 2026"/>
+                    <Run Text=" Gal Afik" FontWeight="SemiBold"/>
+                    <Run Text=" • Job Search Tracker v0.1.0 • All Rights Reserved"/>
+                </TextBlock>
+
+                <!-- Sponsor Button -->
+                <Button Grid.Column="2" 
+                        Content="❤️ Sponsor" 
+                        Click="SponsorButton_Click"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Padding="15,4"
+                        FontSize="11"
+                        Cursor="Hand"
+                        ToolTip="Support this project on GitHub Sponsors">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#EA4AAA"/>
+                            <Setter Property="BorderBrush" Value="#EA4AAA"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="4"
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#EA4AAA"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </Window>

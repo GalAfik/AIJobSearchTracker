@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace JobSearchTracker.Views
 {
@@ -15,6 +17,23 @@ namespace JobSearchTracker.Views
         {
             DialogResult = true;
             Close();
+        }
+
+        private void SponsorLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = e.Uri.AbsoluteUri,
+                    UseShellExecute = true
+                });
+                e.Handled = true;
+            }
+            catch
+            {
+                // Silently ignore if browser fails to open
+            }
         }
     }
 }

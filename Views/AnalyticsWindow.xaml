@@ -1,0 +1,443 @@
+<Window x:Class="JobSearchTracker.Views.AnalyticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="📊 Job Search Analytics" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BackgroundBrush}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="📊 Job Search Analytics" 
+                       FontSize="28" 
+                       FontWeight="Bold" 
+                       Foreground="{DynamicResource AccentBrush}"
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="Comprehensive insights into your job search journey" 
+                       FontSize="14" 
+                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Quick Stats Row -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total Applications -->
+                    <Border Grid.Column="0" 
+                            Background="{DynamicResource HighlightBrush}"
+                            BorderBrush="{DynamicResource AccentBrush}"
+                            BorderThickness="0,0,0,3"
+                            CornerRadius="6"
+                            Padding="20"
+                            Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="📋" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding TotalApplications}" 
+                                       FontSize="36" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total Applications" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Active Applications -->
+                    <Border Grid.Column="1" 
+                            Background="{DynamicResource HighlightBrush}"
+                            BorderBrush="#4CAF50"
+                            BorderThickness="0,0,0,3"
+                            CornerRadius="6"
+                            Padding="20"
+                            Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="🎯" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding ActiveApplications}" 
+                                       FontSize="36" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4CAF50"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Active Applications" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Interviews -->
+                    <Border Grid.Column="2" 
+                            Background="{DynamicResource HighlightBrush}"
+                            BorderBrush="#2196F3"
+                            BorderThickness="0,0,0,3"
+                            CornerRadius="6"
+                            Padding="20"
+                            Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="💼" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding TotalInterviews}" 
+                                       FontSize="36" 
+                                       FontWeight="Bold" 
+                                       Foreground="#2196F3"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total Interviews" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Offers -->
+                    <Border Grid.Column="3" 
+                            Background="{DynamicResource HighlightBrush}"
+                            BorderBrush="#FF9800"
+                            BorderThickness="0,0,0,3"
+                            CornerRadius="6"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="🎉" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding TotalOffers}" 
+                                       FontSize="36" 
+                                       FontWeight="Bold" 
+                                       Foreground="#FF9800"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total Offers" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Response Rates Section -->
+                <GroupBox Header="📈 Response Rates" Margin="0,0,0,20" Padding="20" Style="{DynamicResource ModernGroupBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                            <TextBlock Text="Interview Rate" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock FontSize="28" FontWeight="Bold" Foreground="#2196F3">
+                                <Run Text="{Binding InterviewRate, StringFormat='{}{0:F1}'}"/>
+                                <Run Text="%" FontSize="18"/>
+                            </TextBlock>
+                            <TextBlock Text="of applications" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="0,0,15,0">
+                            <TextBlock Text="Offer Rate" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock FontSize="28" FontWeight="Bold" Foreground="#4CAF50">
+                                <Run Text="{Binding OfferRate, StringFormat='{}{0:F1}'}"/>
+                                <Run Text="%" FontSize="18"/>
+                            </TextBlock>
+                            <TextBlock Text="of applications" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Margin="0,0,15,0">
+                            <TextBlock Text="Interview → Offer" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock FontSize="28" FontWeight="Bold" Foreground="#FF9800">
+                                <Run Text="{Binding InterviewToOfferRate, StringFormat='{}{0:F1}'}"/>
+                                <Run Text="%" FontSize="18"/>
+                            </TextBlock>
+                            <TextBlock Text="conversion rate" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="Rejection Rate" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock FontSize="28" FontWeight="Bold" Foreground="#F44336">
+                                <Run Text="{Binding RejectionRate, StringFormat='{}{0:F1}'}"/>
+                                <Run Text="%" FontSize="18"/>
+                            </TextBlock>
+                            <TextBlock Text="of applications" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Status Breakdown -->
+                <GroupBox Header="📊 Status Breakdown" Margin="0,0,0,20" Padding="20" Style="{DynamicResource ModernGroupBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="📝 Not Applied" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding NotAppliedCount}" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="📤 Applied" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding AppliedCount}" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="💼 Interviewed" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding InterviewedCount}" FontWeight="Bold" Foreground="#2196F3"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🎉 Offered" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding OfferedCount}" FontWeight="Bold" Foreground="#FF9800"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="✅ Accepted" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding AcceptedCount}" FontWeight="Bold" Foreground="#4CAF50"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="❌ Rejected" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding RejectedCount}" FontWeight="Bold" Foreground="#F44336"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🚫 Withdrawn" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding WithdrawnCount}" FontWeight="Bold" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Time-Based Insights -->
+                <GroupBox Header="⏰ Time-Based Insights" Margin="0,0,0,20" Padding="20" Style="{DynamicResource ModernGroupBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="📅 This Week" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding ApplicationsThisWeek}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="applications sent" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="0,0,20,0">
+                            <TextBlock Text="📆 This Month" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding ApplicationsThisMonth}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="applications sent" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="⚡ Current Streak" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding CurrentStreak}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#FF9800"/>
+                            <TextBlock Text="consecutive days" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Platform & Timing Insights -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Platform Insights -->
+                    <GroupBox Grid.Column="0" Header="🌐 Platform Insights" Padding="20" Style="{DynamicResource ModernGroupBox}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Most Used:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding MostUsedPlatform}" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Most Successful:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding MostSuccessfulPlatform}" Foreground="#4CAF50" FontWeight="Bold"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Avg. Response Time:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Foreground="{DynamicResource PrimaryTextBrush}" FontWeight="Bold">
+                                    <Run Text="{Binding AverageDaysToResponse, StringFormat='{}{0:F1}'}"/>
+                                    <Run Text=" days"/>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Activity Patterns -->
+                    <GroupBox Grid.Column="2" Header="🔥 Activity Patterns" Padding="20" Style="{DynamicResource ModernGroupBox}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Busiest Day:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding BusiestDay}" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Busiest Month:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding BusiestMonth}" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold"/>
+                            </Grid>
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Upcoming Interviews:" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding UpcomingInterviews}" Foreground="#2196F3" FontWeight="Bold"/>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+
+                <!-- Motivational Message -->
+                <Border Background="{DynamicResource AccentBrush}"
+                        CornerRadius="8"
+                        Padding="20"
+                        Margin="0,10,0,0">
+                    <StackPanel>
+                        <TextBlock Text="💪 Keep Going!" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="13" 
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Opacity="0.95">
+                            <Run Text="Every application is a step forward. Your persistence and dedication will pay off."/>
+                            <LineBreak/>
+                            <Run Text="Stay consistent, stay motivated, and remember: the right opportunity is out there! 🚀"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

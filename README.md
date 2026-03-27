@@ -189,4 +189,18 @@ Planned features for future versions:
 
 ## License
 
-This project is provided as-is for personal use.
+MIT License - Copyright © 2026 Gal Afik
+
+This project is open source and available under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+
+**IMPORTANT: Please Read**
+
+This software is provided "as is" without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. 
+
+In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
+**Always backup your project files regularly.** While every effort has been made to ensure data integrity, the developer is not responsible for any data loss or issues arising from the use of this software.
+
+Use at your own risk.

@@ -3,6 +3,7 @@ using JobSearchTracker.Services;
 using JobSearchTracker.ViewModels;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,8 +32,71 @@ namespace JobSearchTracker
             _preferencesService = new PreferencesService();
             DataContext = _viewModel;
 
+            // Set random motivational title message
+            Title = $"Job Search Tracker - {GetRandomMotivationalMessage()}";
+
             Loaded += MainWindow_Loaded;
             LoadPreferencesAsync();
+        }
+
+        private string GetRandomMotivationalMessage()
+        {
+            var messages = new[]
+            {
+                "You've got this!",
+                "Your dream job is out there!",
+                "Keep pushing forward!",
+                "Job searching sucks, but you don't!",
+                "Today could be the day!",
+                "One step closer to your goal!",
+                "You're doing amazing!",
+                "Believe in yourself!",
+                "Your next opportunity awaits!",
+                "Stay positive, stay persistent!",
+                "You're stronger than you think!",
+                "Great things take time!",
+                "You belong at the table!",
+                "Your skills are valuable!",
+                "Don't give up now!",
+                "Success is just around the corner!",
+                "You're more qualified than you realize!",
+                "Keep showing up!",
+                "Your persistence will pay off!",
+                "You're on the right path!",
+                "Every application is progress!",
+                "You're building something great!",
+                "Trust the process!",
+                "Your effort matters!",
+                "Small steps lead to big results!",
+                "You're not alone in this journey!",
+                "Your breakthrough is coming!",
+                "Stay focused on your goals!",
+                "You've overcome challenges before!",
+                "This is just a chapter, not the whole story!",
+                "Your best days are ahead!",
+                "Keep refining your craft!",
+                "You bring unique value!",
+                "Rejection redirects you to something better!",
+                "Your determination is inspiring!",
+                "One day at a time!",
+                "You're making progress, even when it's hard to see!",
+                "The right fit is worth the wait!",
+                "Your resilience is your superpower!",
+                "Keep learning, keep growing!",
+                "You deserve success!",
+                "Don't let setbacks define you!",
+                "Your story isn't over yet!",
+                "Consistency beats perfection!",
+                "You're investing in your future!",
+                "Stay hungry, stay humble!",
+                "Your next chapter starts now!",
+                "Embrace the journey!",
+                "You're capable of amazing things!",
+                "Keep your head up, champion!"
+            };
+
+            var random = new Random();
+            return messages[random.Next(messages.Length)];
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -132,6 +196,46 @@ namespace JobSearchTracker
                 MessageBoxButton.OK,
                 MessageBoxImage.Information
             );
+        }
+
+        private void AnalyticsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.Jobs == null || _viewModel.Jobs.Count == 0)
+            {
+                MessageBox.Show(
+                    "No data available for analytics.\n\nPlease create a project and add some jobs first.",
+                    "Analytics Unavailable",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+                return;
+            }
+
+            // Convert JobViewModels to Jobs for analytics
+            var jobs = _viewModel.Jobs.Select(jvm => jvm.Model).ToList();
+            var analyticsWindow = new Views.AnalyticsWindow(jobs);
+            analyticsWindow.ShowDialog();
+        }
+
+        private void ReportBugMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/GalAfik/AIJobSearchTracker/issues",
+                    UseShellExecute = true
+                });
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "Could not open the bug reporting page.\n\nPlease visit:\nhttps://github.com/GalAfik/AIJobSearchTracker/issues",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+            }
         }
 
         private void JobsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -325,6 +429,28 @@ namespace JobSearchTracker
                     _viewModel.SelectedJob.Model.Contacts.Remove(contactVM.Model);
                     _viewModel.SelectedJob.Contacts.Remove(contactVM);
                 }
+            }
+        }
+
+        private void SponsorButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/sponsors/GalAfik",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Unable to open sponsor link: {ex.Message}\n\n" +
+                    "Please visit: https://github.com/sponsors/GalAfik",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
     }

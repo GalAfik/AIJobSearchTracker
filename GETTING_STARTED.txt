@@ -1,0 +1,133 @@
+Job Search Tracker - Getting Started
+=====================================
+
+INSTALLATION
+1. Extract all files to a folder of your choice
+2. Run JobSearchTracker.exe
+3. Click "Get Started!" to see the welcome screen
+
+FIRST TIME SETUP
+1. Go to Help → Preferences to configure:
+   - Your preferred theme (Light/Dark)
+   - Your home address (for directions feature)
+   - Default sorting preferences
+   
+2. To use AI features:
+   - Obtain API keys from:
+     * Claude: https://console.anthropic.com/
+     * OpenAI: https://platform.openai.com/
+     * Gemini: https://makersuite.google.com/
+   - Enter them in Help → Preferences → AI Configuration
+
+QUICK START
+1. File → New Project to create your first project
+2. Add jobs manually or use AI to scrape from URLs
+3. Track interviews, contacts, and progress
+4. Export to Excel or CSV anytime
+
+TRY THE SAMPLES
+We've included sample files to help you get started:
+1. Open the Samples folder
+2. Use File → Open Project and select "Sample_Job_Search_Project.json"
+3. Explore the app with pre-loaded data!
+4. Or try importing: File → Import from CSV and select "Sample_Job_Import.csv"
+
+FEATURES
+✅ Track unlimited job applications
+✅ AI-powered job scraping from URLs
+✅ Interview and contact management
+✅ Comprehensive analytics dashboard
+✅ CSV/Excel import and export
+✅ Light and dark themes
+✅ Get directions to job locations
+✅ Compact and detailed view modes
+
+KEYBOARD SHORTCUTS
+- Ctrl+N: New Project
+- Ctrl+O: Open Project
+- Ctrl+S: Save Project
+- Double-click a job: Edit details
+
+TIPS FOR SUCCESS
+📋 Update job statuses regularly to track your progress
+💼 Add interviews immediately after scheduling them
+👤 Save recruiter contacts for future follow-ups
+📊 Check Analytics weekly to see your patterns
+💾 Export your data regularly as backup
+
+AI JOB SCRAPING (Optional)
+The AI feature can save you tons of time:
+1. Copy a job posting URL
+2. Click "🤖 AI Add" in the toolbar
+3. Paste the URL
+4. AI automatically fills in company, title, location, and description
+5. Review and save!
+
+Note: Requires free API keys from supported providers.
+
+GETTING DIRECTIONS
+Set your home address in preferences, then:
+1. Select any job
+2. Click the 🗺️ button next to the location field
+3. Google Maps opens with directions from home to the job
+
+IMPORT/EXPORT
+Import existing data:
+- File → Import from CSV (adds to current project)
+- See Samples/Sample_Job_Import.csv for correct format
+
+Export your data:
+- File → Export to Excel (formatted spreadsheet)
+- File → Export to CSV (portable format)
+
+ANALYTICS DASHBOARD
+View your progress:
+- Help → Analytics
+- See total applications, interview rates, and success metrics
+- Track your activity streaks
+- Identify which platforms work best for you
+
+TROUBLESHOOTING
+
+Q: The application won't start
+A: Make sure you extracted ALL files from the ZIP. Check that Windows 
+   Defender didn't block the application.
+
+Q: AI scraping isn't working
+A: Verify your API key is entered correctly in Preferences. Make sure 
+   you have internet connection and available API credits.
+
+Q: My changes aren't saving
+A: Click "💾 Save Changes" in the job details panel, or use File → Save 
+   Project to save the entire project.
+
+Q: Where are my project files saved?
+A: Projects are .json files saved wherever you choose. Use File → Save As 
+   to see or change the location.
+
+Q: Can I use this on multiple computers?
+A: Yes! Your project files are portable. Just copy the .json files to 
+   another computer with Job Search Tracker installed.
+
+SUPPORT
+🐛 Report bugs: https://github.com/GalAfik/AIJobSearchTracker/issues
+📖 Full documentation: https://github.com/GalAfik/AIJobSearchTracker
+❤️  Support development: https://github.com/sponsors/GalAfik
+
+REMINDER
+Job searching is tough, but you're not alone. This tool is here to help 
+you stay organized and motivated. Every application is progress!
+
+You've got this! 💪
+
+---
+
+Version 0.1.0
+© 2026 Gal Afik - All Rights Reserved
+
+DISCLAIMER
+This software is provided "as is" without warranty of any kind. Use at 
+your own risk. The developer is not responsible for any data loss or 
+issues arising from the use of this software.
+
+Always backup your project files regularly.

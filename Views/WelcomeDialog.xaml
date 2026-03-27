@@ -35,6 +35,27 @@
         <!-- Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="30,20">
             <StackPanel>
+                <!-- Subtle Sponsorship Message -->
+                <Border Background="{DynamicResource HighlightBrush}" 
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="15,10"
+                        Margin="0,0,0,20">
+                    <TextBlock TextWrapping="Wrap" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               HorizontalAlignment="Center">
+                        <Run Text="This software is completely free and open-source. "/>
+                        <Run Text="If you find it helpful, consider "/>
+                        <Hyperlink NavigateUri="https://github.com/sponsors/GalAfik" 
+                                   RequestNavigate="SponsorLink_RequestNavigate"
+                                   Foreground="{DynamicResource AccentBrush}">
+                            <Run Text="supporting its development ❤️"/>
+                        </Hyperlink>
+                    </TextBlock>
+                </Border>
+
                 <TextBlock Text="What is Job Search Tracker?" 
                            FontSize="18" 
                            FontWeight="Bold" 
