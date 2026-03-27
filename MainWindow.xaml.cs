@@ -31,7 +31,24 @@ namespace JobSearchTracker
             _preferencesService = new PreferencesService();
             DataContext = _viewModel;
 
+            Loaded += MainWindow_Loaded;
             LoadPreferencesAsync();
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Show intro dialog if preferences indicate it should be shown
+            if (_viewModel.UserPreferences.ShowIntroOnStartup)
+            {
+                var welcomeDialog = new Views.WelcomeDialog();
+                welcomeDialog.ShowDialog();
+
+                if (welcomeDialog.DontShowAgain)
+                {
+                    _viewModel.UserPreferences.ShowIntroOnStartup = false;
+                    await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
+                }
+            }
         }
 
         private async void LoadPreferencesAsync()

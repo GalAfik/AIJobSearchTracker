@@ -11,6 +11,83 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BackgroundBrush}">
 
+    <Window.Resources>
+        <!-- Normal View Template -->
+        <DataTemplate x:Key="NormalJobTemplate">
+            <Border Padding="12" 
+                    BorderBrush="{DynamicResource BorderBrush}" 
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="4"
+                    Margin="2">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+                        <Setter Property="Opacity" Value="1.0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRejected}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource RejectedBackgroundBrush}"/>
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ListItemHoverBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <TextBlock Text="{Binding CompanyName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="{Binding JobTitle}" FontSize="12" Foreground="{DynamicResource AccentBrush}" Margin="0,2,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <Border Background="{DynamicResource AccentBrush}" 
+                                CornerRadius="3" 
+                                Padding="6,2" 
+                                Margin="0,0,8,0">
+                            <TextBlock Text="{Binding Status}" FontSize="10" Foreground="White" FontWeight="SemiBold"/>
+                        </Border>
+                        <TextBlock Text="{Binding Location}" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="💼 " FontSize="10"/>
+                        <TextBlock Text="{Binding Interviews.Count}" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        <TextBlock Text=" interviews" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}" Margin="2,0,15,0"/>
+                        <TextBlock Text="👤 " FontSize="10"/>
+                        <TextBlock Text="{Binding Contacts.Count}" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        <TextBlock Text=" contacts" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}" Margin="2,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- Compact View Template -->
+        <DataTemplate x:Key="CompactJobTemplate">
+            <Border Padding="8,6" 
+                    BorderBrush="{DynamicResource BorderBrush}" 
+                    BorderThickness="0,0,0,1"
+                    Margin="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+                        <Setter Property="Opacity" Value="1.0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRejected}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource RejectedBackgroundBrush}"/>
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ListItemHoverBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding CompanyName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text=" • " FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Margin="4,0"/>
+                    <TextBlock Text="{Binding JobTitle}" FontSize="12" Foreground="{DynamicResource AccentBrush}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,10 +101,12 @@
             <MenuItem Header="_File" Foreground="{DynamicResource PrimaryTextBrush}">
                 <MenuItem Header="_New Project" Command="{Binding NewProjectCommand}"/>
                 <MenuItem Header="_Open Project..." Command="{Binding LoadProjectCommand}"/>
+                <MenuItem Header="_Import from CSV..." Command="{Binding ImportCsvCommand}"/>
                 <MenuItem Header="_Save Project" Command="{Binding SaveProjectCommand}"/>
                 <MenuItem Header="Save Project _As..." Command="{Binding SaveProjectAsCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Export to Excel..." Command="{Binding ExportToExcelCommand}"/>
+                <MenuItem Header="Export to _CSV..." Command="{Binding ExportToCsvCommand}"/>
                 <Separator/>
                 <MenuItem Header="E_xit" Click="ExitMenuItem_Click"/>
             </MenuItem>
@@ -56,6 +135,12 @@
             <Button Content="🗑️ Delete Job" Command="{Binding DeleteJobCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
             <Separator Margin="5,0"/>
             <Button Content="📊 Export" Command="{Binding ExportToExcelCommand}" Style="{DynamicResource ModernButton}" Margin="0,0,5,0"/>
+            <Separator Margin="5,0"/>
+            <CheckBox x:Name="CompactViewCheckBox" Content="📋 Compact View" 
+                      IsChecked="{Binding UserPreferences.UseCompactView, Mode=TwoWay}"
+                      VerticalAlignment="Center" 
+                      Foreground="{DynamicResource PrimaryTextBrush}"
+                      Margin="5,0"/>
             <Separator Margin="5,0"/>
             <TextBlock Text="{Binding ProjectName}" VerticalAlignment="Center" FontWeight="Bold" Margin="10,0" Foreground="{DynamicResource AccentBrush}" FontSize="14"/>
         </ToolBar>
@@ -128,56 +213,22 @@
 
                 <!-- Jobs List -->
                 <ListBox Grid.Row="3" 
+                         x:Name="JobsListBox"
                          ItemsSource="{Binding FilteredJobs}"
                          SelectedItem="{Binding SelectedJob}"
-                         MouseDoubleClick="JobsList_MouseDoubleClick"
-                         Style="{DynamicResource ModernListBox}">
+                         MouseDoubleClick="JobsList_MouseDoubleClick">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="12" 
-                                    BorderBrush="{DynamicResource BorderBrush}" 
-                                    BorderThickness="0,0,0,1"
-                                    CornerRadius="4"
-                                    Margin="2">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
-                                        <Setter Property="Opacity" Value="1.0"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsRejected}" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource RejectedBackgroundBrush}"/>
-                                                <Setter Property="Opacity" Value="0.6"/>
-                                            </DataTrigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource ListItemHoverBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding CompanyName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                                    <TextBlock Text="{Binding JobTitle}" FontSize="12" Foreground="{DynamicResource AccentBrush}" Margin="0,2,0,0"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <Border Background="{DynamicResource AccentBrush}" 
-                                                CornerRadius="3" 
-                                                Padding="6,2" 
-                                                Margin="0,0,8,0">
-                                            <TextBlock Text="{Binding Status}" FontSize="10" Foreground="White" FontWeight="SemiBold"/>
-                                        </Border>
-                                        <TextBlock Text="{Binding Location}" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <TextBlock Text="💼 " FontSize="10"/>
-                                        <TextBlock Text="{Binding Interviews.Count}" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                        <TextBlock Text=" interviews" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}" Margin="2,0,15,0"/>
-                                        <TextBlock Text="👤 " FontSize="10"/>
-                                        <TextBlock Text="{Binding Contacts.Count}" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                                        <TextBlock Text=" contacts" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}" Margin="2,0,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
+                        <StaticResource ResourceKey="NormalJobTemplate"/>
                     </ListBox.ItemTemplate>
+                    <ListBox.Style>
+                        <Style TargetType="ListBox" BasedOn="{StaticResource ModernListBox}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UserPreferences.UseCompactView}" Value="True">
+                                    <Setter Property="ItemTemplate" Value="{StaticResource CompactJobTemplate}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Style>
                 </ListBox>
             </Grid>
 
@@ -441,7 +492,7 @@
             <TextBlock HorizontalAlignment="Center" 
                        Foreground="{DynamicResource SecondaryTextBrush}" 
                        FontSize="11">
-                <Run Text="© 2024"/>
+                <Run Text="© 2026"/>
                 <Run Text=" Gal Afik" FontWeight="SemiBold"/>
                 <Run Text=" • Job Search Tracker • All Rights Reserved"/>
             </TextBlock>

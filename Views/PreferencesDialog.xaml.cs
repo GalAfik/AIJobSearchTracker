@@ -38,6 +38,12 @@ namespace JobSearchTracker.Views
                 ThemeComboBox.SelectedItem = themeItem;
             }
 
+            // Set compact view
+            CompactViewCheckBox.IsChecked = _preferences.UseCompactView;
+
+            // Set show intro on startup
+            ShowIntroCheckBox.IsChecked = _preferences.ShowIntroOnStartup;
+
             // Set home address fields
             StreetTextBox.Text = _preferences.Street;
             CityTextBox.Text = _preferences.City;
@@ -145,6 +151,12 @@ namespace JobSearchTracker.Views
             {
                 _preferences.Theme = Enum.Parse<AppTheme>(themeItem.Tag.ToString()!);
             }
+
+            // Save compact view
+            _preferences.UseCompactView = CompactViewCheckBox.IsChecked ?? false;
+
+            // Save show intro on startup
+            _preferences.ShowIntroOnStartup = ShowIntroCheckBox.IsChecked ?? true;
 
             // Save home address fields
             _preferences.Street = StreetTextBox.Text.Trim();

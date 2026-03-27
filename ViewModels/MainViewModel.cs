@@ -16,6 +16,7 @@ namespace JobSearchTracker.ViewModels
     {
         private readonly ProjectService _projectService;
         private readonly ExportService _exportService;
+        private readonly CsvService _csvService;
         private readonly EmailService _emailService;
         private readonly DirectionsService _directionsService;
 
@@ -32,6 +33,7 @@ namespace JobSearchTracker.ViewModels
         {
             _projectService = new ProjectService();
             _exportService = new ExportService();
+            _csvService = new CsvService();
             _emailService = new EmailService();
             _directionsService = new DirectionsService();
 
@@ -41,9 +43,11 @@ namespace JobSearchTracker.ViewModels
             // Initialize commands
             NewProjectCommand = new RelayCommand(_ => NewProject());
             LoadProjectCommand = new RelayCommand(_ => LoadProject());
+            ImportCsvCommand = new RelayCommand(_ => ImportCsv());
             SaveProjectCommand = new RelayCommand(_ => SaveProject(), _ => _currentProject != null);
             SaveProjectAsCommand = new RelayCommand(_ => SaveProjectAs(), _ => _currentProject != null);
             ExportToExcelCommand = new RelayCommand(_ => ExportToExcel(), _ => _currentProject != null);
+            ExportToCsvCommand = new RelayCommand(_ => ExportToCsv(), _ => _currentProject != null);
             AddJobCommand = new RelayCommand(_ => AddJob(), _ => _currentProject != null);
             AddJobFromUrlCommand = new RelayCommand(_ => AddJobFromUrl(), _ => _currentProject != null);
             EditJobCommand = new RelayCommand(_ => EditJob(), _ => SelectedJob != null);
@@ -108,9 +112,11 @@ namespace JobSearchTracker.ViewModels
 
         public RelayCommand NewProjectCommand { get; }
         public RelayCommand LoadProjectCommand { get; }
+        public RelayCommand ImportCsvCommand { get; }
         public RelayCommand SaveProjectCommand { get; }
         public RelayCommand SaveProjectAsCommand { get; }
         public RelayCommand ExportToExcelCommand { get; }
+        public RelayCommand ExportToCsvCommand { get; }
         public RelayCommand AddJobCommand { get; }
         public RelayCommand AddJobFromUrlCommand { get; }
         public RelayCommand EditJobCommand { get; }
@@ -154,14 +160,7 @@ namespace JobSearchTracker.ViewModels
                     _currentProject = await _projectService.LoadProjectAsync(dialog.FileName);
                     _currentFilePath = dialog.FileName;
 
-                    Jobs.Clear();
-                    foreach (var job in _currentProject.Jobs)
-                    {
-                        Jobs.Add(new JobViewModel(job));
-                    }
-
-                    ApplyFilter();
-                    OnPropertyChanged(nameof(ProjectName));
+                    LoadProjectIntoViewModel(_currentProject);
 
                     MessageBox.Show($"Project '{_currentProject.Name}' loaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -170,6 +169,20 @@ namespace JobSearchTracker.ViewModels
                     MessageBox.Show($"Failed to load project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void LoadProjectIntoViewModel(JobSearchProject project)
+        {
+            _currentProject = project;
+
+            Jobs.Clear();
+            foreach (var job in project.Jobs)
+            {
+                Jobs.Add(new JobViewModel(job));
+            }
+
+            ApplyFilter();
+            OnPropertyChanged(nameof(ProjectName));
         }
 
         private async void SaveProject()
@@ -239,6 +252,78 @@ namespace JobSearchTracker.ViewModels
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Failed to export data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void ExportToCsv()
+        {
+            if (_currentProject == null)
+                return;
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                FileName = _currentProject.Name + "_Export.csv"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    SyncJobsToProject();
+                    _csvService.ExportToCsv(_currentProject, dialog.FileName);
+                    MessageBox.Show("Data exported to CSV successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to export data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void ImportCsv()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var projectName = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+                    var importedProject = _csvService.ImportFromCsv(dialog.FileName, projectName, "Imported from CSV");
+
+                    if (_currentProject == null)
+                    {
+                        // No project loaded - create a new project with imported jobs
+                        LoadProjectIntoViewModel(importedProject);
+                        _currentFilePath = null;
+                        OnPropertyChanged(nameof(ProjectName));
+                        MessageBox.Show($"Successfully imported {importedProject.Jobs.Count} jobs from CSV and created a new project!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        // Add imported jobs to existing project
+                        int importedCount = 0;
+                        foreach (var job in importedProject.Jobs)
+                        {
+                            _currentProject.Jobs.Add(job);
+                            Jobs.Add(new JobViewModel(job));
+                            importedCount++;
+                        }
+
+                        ApplyFilter();
+                        MessageBox.Show($"Successfully imported {importedCount} jobs from CSV into the current project!\n\nTotal jobs in project: {_currentProject.Jobs.Count}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to import CSV: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

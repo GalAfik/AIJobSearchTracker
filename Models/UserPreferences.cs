@@ -1,9 +1,11 @@
+using JobSearchTracker.ViewModels;
+
 namespace JobSearchTracker.Models
 {
     /// <summary>
     /// Represents user preferences for the application.
     /// </summary>
-    public class UserPreferences
+    public class UserPreferences : ViewModelBase
     {
         /// <summary>
         /// Gets or sets the application theme.
@@ -87,5 +89,21 @@ namespace JobSearchTracker.Models
         /// Gets or sets the preferred AI provider.
         /// </summary>
         public string PreferredAiProvider { get; set; } = "Claude";
+
+        private bool _useCompactView = false;
+
+        /// <summary>
+        /// Gets or sets whether to use compact view for job list.
+        /// </summary>
+        public bool UseCompactView
+        {
+            get => _useCompactView;
+            set => SetProperty(ref _useCompactView, value);
+        }
+
+        /// <summary>
+        /// Gets or sets whether to show the intro dialog on startup.
+        /// </summary>
+        public bool ShowIntroOnStartup { get; set; } = true;
     }
 }

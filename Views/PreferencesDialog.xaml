@@ -41,6 +41,26 @@
                             <ComboBoxItem Content="Light" Tag="Light"/>
                             <ComboBoxItem Content="Dark" Tag="Dark"/>
                         </ComboBox>
+
+                        <TextBlock Text="Job List View:" FontSize="14" Margin="0,20,0,5"/>
+                        <CheckBox x:Name="CompactViewCheckBox" 
+                                  Content="Use compact view (shows only company name and job title)" 
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,5,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,10" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Compact view reduces vertical space by showing only essential information. Uncheck for detailed view with status, location, and counts.
+                        </TextBlock>
+
+                        <TextBlock Text="Startup:" FontSize="14" Margin="0,20,0,5"/>
+                        <CheckBox x:Name="ShowIntroCheckBox" 
+                                  Content="Show introduction dialog on startup" 
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,5,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,10" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Display a welcome screen with features and getting started guide each time you launch the application.
+                        </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

@@ -1,0 +1,127 @@
+<Window x:Class="JobSearchTracker.Views.WelcomeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Welcome to Job Search Tracker" Height="500" Width="650"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{DynamicResource BackgroundBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{DynamicResource AccentBrush}" 
+                Padding="30,20">
+            <StackPanel>
+                <TextBlock Text="Welcome to Job Search Tracker!" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Foreground="White"
+                           TextAlignment="Center"/>
+                <TextBlock Text="Your all-in-one solution for managing your job search journey" 
+                           FontSize="14" 
+                           Foreground="White"
+                           TextAlignment="Center"
+                           Margin="0,5,0,0"
+                           Opacity="0.9"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="30,20">
+            <StackPanel>
+                <TextBlock Text="What is Job Search Tracker?" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap" 
+                           FontSize="13" 
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           Margin="0,0,0,20"
+                           Text="Job Search Tracker is a powerful desktop application designed to help you organize and manage your job search process. Keep track of applications, interviews, contacts, and more—all in one place."/>
+
+                <TextBlock Text="Key Features:" 
+                           FontSize="16" 
+                           FontWeight="Bold" 
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           Margin="0,0,0,10"/>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Track Jobs: " FontWeight="Bold"/>
+                    <Run Text="Manage job applications with company names, titles, locations, statuses, and more."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• AI-Powered Job Scraping: " FontWeight="Bold"/>
+                    <Run Text="Paste a job posting URL and let AI automatically extract job details."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Interview Management: " FontWeight="Bold"/>
+                    <Run Text="Schedule and track interviews with rounds, types, dates, and outcomes."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Contact Tracking: " FontWeight="Bold"/>
+                    <Run Text="Keep track of recruiters, hiring managers, and other important contacts."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Import/Export: " FontWeight="Bold"/>
+                    <Run Text="Export your data to CSV or Excel format, and import existing CSV files."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Light and Dark Themes: " FontWeight="Bold"/>
+                    <Run Text="Choose between light and dark mode to match your preference."/>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}">
+                    <Run Text="• Compact View: " FontWeight="Bold"/>
+                    <Run Text="Toggle between detailed and compact job list views to save screen space."/>
+                </TextBlock>
+
+                <TextBlock Text="Getting Started:" 
+                           FontSize="16" 
+                           FontWeight="Bold" 
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           Margin="0,20,0,10"/>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}" Text="1. Create a new project or open an existing one from the File menu"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}" Text="2. Add jobs manually, use AI to scrape from URLs, or import from CSV"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}" Text="3. Click on a job to view and edit details, add interviews, and manage contacts"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}" Text="4. Configure your preferences from Help > Preferences"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5" Foreground="{DynamicResource SecondaryTextBrush}" Text="5. Export your data anytime to CSV or Excel for sharing or backup"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Don't Show Again Checkbox -->
+        <Border Grid.Row="2" 
+                Background="{DynamicResource HighlightBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,1,0,1" 
+                Padding="30,15">
+            <CheckBox x:Name="DontShowAgainCheckBox" 
+                      Content="Don't show this introduction on startup" 
+                      Foreground="{DynamicResource PrimaryTextBrush}"
+                      FontSize="13"/>
+        </Border>
+
+        <!-- Footer Buttons -->
+        <Border Grid.Row="3" Padding="30,15">
+            <Button Content="Get Started!" 
+                    Click="GetStartedButton_Click"
+                    Style="{DynamicResource ModernButton}"
+                    HorizontalAlignment="Center"
+                    Padding="40,10"
+                    FontSize="14"
+                    FontWeight="Bold"/>
+        </Border>
+    </Grid>
+</Window>
