@@ -105,5 +105,10 @@ namespace JobSearchTracker.Models
         /// Gets or sets whether to show the intro dialog on startup.
         /// </summary>
         public bool ShowIntroOnStartup { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether to automatically save the project after importing files.
+        /// </summary>
+        public bool AutoSaveAfterImport { get; set; } = false;
     }
 }

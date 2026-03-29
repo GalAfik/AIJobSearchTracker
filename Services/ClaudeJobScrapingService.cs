@@ -10,11 +10,12 @@ namespace JobSearchTracker.Services
     /// <summary>
     /// AI job scraping service using Anthropic's Claude API.
     /// </summary>
-    public class ClaudeJobScrapingService : IAiJobScrapingService
+    public class ClaudeJobScrapingService : IAiJobScrapingService, IDisposable
     {
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;
         private const string ApiUrl = "https://api.anthropic.com/v1/messages";
+        private bool _disposed = false;
 
         public string ProviderName => "Claude (Anthropic)";
 
@@ -253,6 +254,31 @@ Important:
                 var p when p.Contains("referral") => ApplicationPlatform.Referral,
                 _ => ApplicationPlatform.Other
             };
+        }
+
+        /// <summary>
+        /// Disposes the HttpClient and releases managed resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Protected implementation of Dispose pattern.
+        /// </summary>
+        /// <param name="disposing">True if called from Dispose(), false if from finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _httpClient?.Dispose();
+                }
+                _disposed = true;
+            }
         }
     }
 }

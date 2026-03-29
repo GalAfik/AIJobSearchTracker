@@ -109,7 +109,7 @@ namespace JobSearchTracker.Views
                 if (result.Success && result.Job != null)
                 {
                     _scrapedJob = result.Job;
-                    
+
                     StatusTextBlock.Text = $"✅ Success! Job details extracted:\n\n" +
                         $"Company: {result.Job.CompanyName}\n" +
                         $"Title: {result.Job.JobTitle}\n" +
@@ -170,6 +170,9 @@ namespace JobSearchTracker.Views
             }
             finally
             {
+                // Dispose the AI service to release HttpClient
+                (aiService as IDisposable)?.Dispose();
+
                 // Re-enable UI
                 ScrapeButton.IsEnabled = true;
                 AiProviderComboBox.IsEnabled = true;

@@ -36,6 +36,7 @@ namespace JobSearchTracker
             Title = $"Job Search Tracker - {GetRandomMotivationalMessage()}";
 
             Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
             LoadPreferencesAsync();
         }
 
@@ -112,6 +113,15 @@ namespace JobSearchTracker
                     _viewModel.UserPreferences.ShowIntroOnStartup = false;
                     await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
                 }
+            }
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Check for unsaved changes
+            if (!_viewModel.CheckUnsavedChanges())
+            {
+                e.Cancel = true;
             }
         }
 
@@ -215,6 +225,12 @@ namespace JobSearchTracker
             var jobs = _viewModel.Jobs.Select(jvm => jvm.Model).ToList();
             var analyticsWindow = new Views.AnalyticsWindow(jobs);
             analyticsWindow.ShowDialog();
+        }
+
+        private void ChangelogMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var changelogWindow = new Views.ChangelogWindow();
+            changelogWindow.ShowDialog();
         }
 
         private void ReportBugMenuItem_Click(object sender, RoutedEventArgs e)

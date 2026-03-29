@@ -38,7 +38,7 @@ This folder contains sample files to help you get started with Job Search Tracke
 **What it is:** A sample CSV file for testing the import feature.
 
 **What it contains:**
-- 10 sample job applications from well-known tech companies
+- 10 sample job applications from various tech companies
 - Various statuses: Applied, Interviewed, Offered, Rejected, Withdrawn, NotApplied
 - Different application platforms: LinkedIn, Indeed, Company Website, Glassdoor, Referral
 - Realistic salary ranges and job descriptions

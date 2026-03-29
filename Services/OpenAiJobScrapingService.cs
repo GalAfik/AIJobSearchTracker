@@ -10,11 +10,12 @@ namespace JobSearchTracker.Services
     /// <summary>
     /// AI job scraping service using OpenAI's ChatGPT API.
     /// </summary>
-    public class OpenAiJobScrapingService : IAiJobScrapingService
+    public class OpenAiJobScrapingService : IAiJobScrapingService, IDisposable
     {
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;
         private const string ApiUrl = "https://api.openai.com/v1/chat/completions";
+        private bool _disposed = false;
 
         public string ProviderName => "ChatGPT (OpenAI)";
 
@@ -255,6 +256,31 @@ Important:
                 var p when p.Contains("referral") => ApplicationPlatform.Referral,
                 _ => ApplicationPlatform.Other
             };
+        }
+
+        /// <summary>
+        /// Disposes the HttpClient and releases managed resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Protected implementation of Dispose pattern.
+        /// </summary>
+        /// <param name="disposing">True if called from Dispose(), false if from finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _httpClient?.Dispose();
+                }
+                _disposed = true;
+            }
         }
     }
 }

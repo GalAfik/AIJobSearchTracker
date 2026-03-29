@@ -44,6 +44,9 @@ namespace JobSearchTracker.Views
             // Set show intro on startup
             ShowIntroCheckBox.IsChecked = _preferences.ShowIntroOnStartup;
 
+            // Set auto-save after import
+            AutoSaveCheckBox.IsChecked = _preferences.AutoSaveAfterImport;
+
             // Set home address fields
             StreetTextBox.Text = _preferences.Street;
             CityTextBox.Text = _preferences.City;
@@ -157,6 +160,9 @@ namespace JobSearchTracker.Views
 
             // Save show intro on startup
             _preferences.ShowIntroOnStartup = ShowIntroCheckBox.IsChecked ?? true;
+
+            // Save auto-save after import
+            _preferences.AutoSaveAfterImport = AutoSaveCheckBox.IsChecked ?? false;
 
             // Save home address fields
             _preferences.Street = StreetTextBox.Text.Trim();
