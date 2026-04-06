@@ -41,6 +41,45 @@ namespace JobSearchTracker.Services
             workbook.SaveAs(filePath);
         }
 
+        /// <summary>
+        /// Exports an unemployment report containing jobs applied to within the last 7 days.
+        /// </summary>
+        /// <param name="jobs">The list of jobs to include in the report (pre-filtered).</param>
+        /// <param name="filePath">The file path where the Excel file should be saved.</param>
+        public void ExportUnemploymentReport(List<Job> jobs, string filePath)
+        {
+            if (jobs == null)
+                throw new ArgumentNullException(nameof(jobs));
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Unemployment Report");
+
+            // Headers
+            worksheet.Cell(1, 1).Value = "Company Name";
+            worksheet.Cell(1, 2).Value = "Job Title";
+            worksheet.Cell(1, 3).Value = "Date Applied";
+            worksheet.Cell(1, 4).Value = "Website";
+
+            // Style headers
+            var headerRange = worksheet.Range(1, 1, 1, 4);
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+
+            // Data rows
+            int row = 2;
+            foreach (var job in jobs)
+            {
+                worksheet.Cell(row, 1).Value = job.CompanyName;
+                worksheet.Cell(row, 2).Value = job.JobTitle;
+                worksheet.Cell(row, 3).Value = job.DateApplied?.ToString("MM/dd/yyyy") ?? "";
+                worksheet.Cell(row, 4).Value = job.JobUrl ?? "";
+                row++;
+            }
+
+            worksheet.Columns().AdjustToContents();
+            workbook.SaveAs(filePath);
+        }
+
         private void CreateJobsWorksheet(XLWorkbook workbook, JobSearchProject project)
         {
             var worksheet = workbook.Worksheets.Add("Jobs");

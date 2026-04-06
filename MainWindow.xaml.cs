@@ -37,7 +37,14 @@ namespace JobSearchTracker
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
-            LoadPreferencesAsync();
+
+            // Start loading preferences and store the task so we can await it later
+            _loadPreferencesTask = LoadPreferencesAsync();
+
+            // Enable drag-and-drop for JSON files
+            AllowDrop = true;
+            DragEnter += MainWindow_DragEnter;
+            Drop += MainWindow_Drop;
         }
 
         private string GetRandomMotivationalMessage()
@@ -102,6 +109,10 @@ namespace JobSearchTracker
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // IMPORTANT: Wait for preferences to load before doing anything else
+            // This ensures LastOpenedFilePath is available
+            await EnsurePreferencesLoadedAsync();
+
             // Show intro dialog if preferences indicate it should be shown
             if (_viewModel.UserPreferences.ShowIntroOnStartup)
             {
@@ -114,24 +125,208 @@ namespace JobSearchTracker
                     await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
                 }
             }
+
+            // Auto-load last opened file if it exists
+            await AutoLoadLastProjectAsync();
+
+            // Check for software updates if enabled
+            await CheckForUpdatesAsync();
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private bool _preferencesLoaded = false;
+        private Task? _loadPreferencesTask = null;
+
+        /// <summary>
+        /// Ensures preferences are loaded before proceeding.
+        /// </summary>
+        private async Task EnsurePreferencesLoadedAsync()
+        {
+            if (_preferencesLoaded)
+                return;
+
+            // Wait for the existing load task to complete
+            if (_loadPreferencesTask != null)
+            {
+                await _loadPreferencesTask;
+            }
+
+            _preferencesLoaded = true;
+        }
+
+        /// <summary>
+        /// Attempts to automatically load the last opened project file.
+        /// </summary>
+        private async Task AutoLoadLastProjectAsync()
+        {
+            var lastFilePath = _viewModel.UserPreferences.LastOpenedFilePath;
+
+            // Only attempt auto-load if there's a path and no project currently loaded
+            if (string.IsNullOrWhiteSpace(lastFilePath))
+                return;
+
+            try
+            {
+                // Try to load the last file (without showing success/error messages)
+                bool loaded = await _viewModel.LoadProjectFromFileAsync(lastFilePath, showSuccessMessage: false);
+
+                if (loaded)
+                {
+                    // Show subtle notification in status bar or title
+                    Title += $" - {System.IO.Path.GetFileNameWithoutExtension(lastFilePath)} (auto-loaded)";
+                }
+                else
+                {
+                    // File couldn't be loaded (deleted, moved, etc.)
+                    // Clear the last opened path so we don't try again
+                    _viewModel.UserPreferences.LastOpenedFilePath = string.Empty;
+                    await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
+                }
+            }
+            catch
+            {
+                // Silently fail - don't interrupt user startup experience
+                _viewModel.UserPreferences.LastOpenedFilePath = string.Empty;
+                await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
+            }
+        }
+
+        /// <summary>
+        /// Checks for software updates if the preference is enabled.
+        /// </summary>
+        private async Task CheckForUpdatesAsync()
+        {
+            // Only check if user has enabled update checking
+            if (!_viewModel.UserPreferences.CheckForUpdates)
+                return;
+
+            try
+            {
+                var updateService = new UpdateService();
+                var latestVersion = await updateService.CheckForUpdatesAsync();
+
+                if (latestVersion != null)
+                {
+                    // Show update notification in bottom left
+                    UpdateVersionRun.Text = latestVersion;
+                    UpdateNotificationTextBlock.Visibility = Visibility.Visible;
+                }
+            }
+            catch
+            {
+                // Silently fail - don't interrupt user experience
+            }
+        }
+
+        /// <summary>
+        /// Opens the download website when the update notification is clicked.
+        /// </summary>
+        private void UpdateNotification_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://www.galafik.com/job-search-tracker/",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open website: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void MainWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            // Check if the dragged data contains files
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // Only allow single JSON files
+                if (files != null && files.Length == 1 && files[0].EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    e.Effects = DragDropEffects.Copy;
+                }
+                else
+                {
+                    e.Effects = DragDropEffects.None;
+                }
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+
+            e.Handled = true;
+        }
+
+        private async void MainWindow_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                if (files != null && files.Length == 1 && files[0].EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    var filePath = files[0];
+
+                    // Check if we need confirmation (project already loaded)
+                    bool hasProject = _viewModel.Jobs.Count > 0;
+
+                    if (hasProject)
+                    {
+                        var result = MessageBox.Show(
+                            "You have a project currently open. Do you want to close it and open the dropped file?",
+                            "Open Dropped File?",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question
+                        );
+
+                        if (result != MessageBoxResult.Yes)
+                            return;
+                    }
+
+                    // Load the dropped file
+                    await _viewModel.LoadProjectFromFileAsync(filePath, showSuccessMessage: true);
+
+                    // Save preferences to update last opened file
+                    await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
+                }
+            }
+
+            e.Handled = true;
+        }
+
+        private async void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Check for unsaved changes
             if (!_viewModel.CheckUnsavedChanges())
             {
                 e.Cancel = true;
+                return;
+            }
+
+            // Save preferences (including last opened file path)
+            try
+            {
+                await _preferencesService.SavePreferencesAsync(_viewModel.UserPreferences);
+            }
+            catch
+            {
+                // Don't block closing if preferences can't be saved
             }
         }
 
-        private async void LoadPreferencesAsync()
+        private async Task LoadPreferencesAsync()
         {
             try
             {
                 _viewModel.UserPreferences = await _preferencesService.LoadPreferencesAsync();
                 ApplyTheme(_viewModel.UserPreferences.Theme);
                 _viewModel.CurrentSortOption = _viewModel.UserPreferences.DefaultSortBy;
+                _viewModel.StatusFilterText = _viewModel.UserPreferences.LastStatusFilter;
             }
             catch
             {
@@ -200,8 +395,8 @@ namespace JobSearchTracker
                 "- Export data to Excel\n" +
                 "- Email integration\n" +
                 "- Light and Dark themes\n\n" +
-                "Version 2.0\n\n" +
-                "© 2024 Gal Afik",
+                "Version 0.1.5\n\n" +
+                "© 2026 Gal Afik",
                 "About Job Search Tracker",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information
@@ -300,8 +495,11 @@ namespace JobSearchTracker
             _viewModel.SelectedJob = null;
             _viewModel.SelectedJob = currentJob;
 
-            MessageBox.Show("Job data reloaded.", "Reloaded", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            if (!_viewModel.UserPreferences.SuppressWarnings)
+            {
+                MessageBox.Show("Job data reloaded.", "Reloaded", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void OpenJobUrlButton_Click(object sender, RoutedEventArgs e)

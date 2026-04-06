@@ -30,14 +30,14 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
-                <!-- Version 0.1.3 -->
+                <!-- Version 0.1.6 -->
                 <Border Background="{DynamicResource SecondaryBackgroundBrush}" 
                         CornerRadius="8" 
                         Padding="20" 
                         Margin="0,0,0,15">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Version 0.1.3" 
+                            <TextBlock Text="Version 0.1.6" 
                                        FontSize="20" 
                                        FontWeight="Bold" 
                                        Foreground="{DynamicResource AccentBrush}"/>
@@ -50,6 +50,282 @@
                                            Foreground="White" 
                                            FontWeight="SemiBold"/>
                             </Border>
+                        </StackPanel>
+                        <TextBlock Text="Released: March 31, 2026" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   Margin="0,0,0,15"/>
+
+                        <!-- New Features -->
+                        <TextBlock Text="✨ New Features" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Unemployment Report Export:" FontWeight="SemiBold"/>
+                                <Run Text=" Generate government-ready job application reports"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="New export option specifically designed for unemployment reporting requirements. Generates a simple Excel document with 4 columns (Company Name, Job Title, Date Applied, Website) containing only jobs you applied to within the last 7 days. Perfect for weekly unemployment claim documentation. Access via File → Export Unemployment Report."/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Improvements -->
+                        <TextBlock Text="⚡ Improvements" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Menu reorganization: Import from CSV moved from File menu to Job menu"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Improved menu logic: File menu for project operations, Job menu for job-specific actions"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Automatic 7-day date filtering from current date for unemployment reports"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Filters only 'Applied' status jobs for accurate reporting"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Auto-generated filename with project name and date stamp"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Success message shows count of exported jobs"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Technical Details -->
+                        <TextBlock Text="🔧 Technical Changes" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added ExportUnemploymentReportCommand to MainViewModel"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Implemented ExportUnemploymentReport() method with date filtering logic"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added ExportUnemploymentReport() to ExportService with simplified Excel format"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Date filtering: DateTime.Now.AddDays(-7) with nullable DateTime handling"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Menu items reorganized in MainWindow.xaml for better UX"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Version 0.1.5 -->
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Version 0.1.5" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                        </StackPanel>
+                        <TextBlock Text="Released: March 30, 2026"
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   Margin="0,0,0,15"/>
+
+                        <!-- New Features -->
+                        <TextBlock Text="✨ New Features" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Software Update Checker:" FontWeight="SemiBold"/>
+                                <Run Text=" Automatic detection of new versions"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="Application now checks www.galafik.com for updates on startup. When a new version is available, a non-intrusive notification appears in the footer with a clickable link to download. Check can be disabled in Preferences → Appearance. Silent failure ensures the check never disrupts your workflow."/>
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Suppress Warning Messages:" FontWeight="SemiBold"/>
+                                <Run Text=" Optional suppression of success confirmations"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="Power users can now enable 'Suppress warning messages' in Preferences → Appearance to hide informational success dialogs (saves, exports, imports). Critical errors and delete confirmations always show regardless of this setting. Default is OFF (warnings shown) for safety."/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Improvements -->
+                        <TextBlock Text="⚡ Improvements" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Non-modal update notification in footer (bottom-left corner)"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Semantic version comparison for accurate update detection"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Cleaner workflow for frequent operations when warnings suppressed"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• User control over update checks and notification preferences"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Technical Details -->
+                        <TextBlock Text="🔧 Technical Changes" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added UpdateService with website scraping and regex pattern matching"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Implemented CheckForUpdates and SuppressWarnings user preferences"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• 10-second timeout on update checks with silent failure handling"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Conditional message display pattern for suppressible warnings"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Version 0.1.4 -->
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Version 0.1.4" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                        </StackPanel>
+                        <TextBlock Text="Released: March 29, 2026" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   Margin="0,0,0,15"/>
+
+                        <!-- New Features -->
+                        <TextBlock Text="✨ New Features"
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Auto-Open Last File:" FontWeight="SemiBold"/>
+                                <Run Text=" Application now automatically reopens your most recent project on startup"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="Fixed critical race condition that prevented automatic file loading. Preferences now fully load before attempting to open last project, ensuring reliable auto-open functionality."/>
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Color-Coded Status Badges:" FontWeight="SemiBold"/>
+                                <Run Text=" Visual status identification with 7 distinct colors"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="Job statuses now display with intuitive color coding: Gray (Not Applied/Withdrawn), Blue (Applied), Orange (Interviewed - attention-grabbing), Green (Offered), Dark Green (Accepted), Red (Rejected). Makes it easier to scan your job list and quickly identify status at a glance."/>
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• "/>
+                                <Run Text="Persistent Filter &amp; Sort Settings:" FontWeight="SemiBold"/>
+                                <Run Text=" Remembers your last used filters and sort options"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="15,2,0,8" FontSize="11">
+                                <Run Text="Application now automatically saves your filter and sort preferences when you change them. When you restart, your Status filter and Sort By selections are restored exactly as you left them, saving time and providing a consistent experience."/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Improvements -->
+                        <TextBlock Text="⚡ Improvements" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,15">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Fixed race condition in preferences loading system"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added status badges to Compact View mode (previously only in Normal view)"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Enhanced visual hierarchy with semantic color associations"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Seamless auto-save of UI preferences without explicit save button"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Technical Details -->
+                        <TextBlock Text="🔧 Technical Changes" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Margin="15,0,0,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Changed LoadPreferencesAsync from async void to async Task for proper awaiting"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added Task synchronization with EnsurePreferencesLoadedAsync method"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Created JobStatusToColorConverter implementing IValueConverter"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Added LastStatusFilter property to UserPreferences model"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Implemented fire-and-forget auto-save pattern in MainViewModel property setters"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,3">
+                                <Run Text="• Updated MainWindow.xaml templates with StatusToColorConverter bindings"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Version 0.1.3 -->
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}" 
+                        CornerRadius="8" 
+                        Padding="20" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Version 0.1.3" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="{DynamicResource AccentBrush}"/>
                         </StackPanel>
                         <TextBlock Text="Released: March 28, 2026" 
                                    FontSize="11" 

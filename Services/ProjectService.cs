@@ -117,10 +117,38 @@ namespace JobSearchTracker.Services
                     try
                     {
                         Directory.CreateDirectory(finalDirectory);
+
+                        // Verify directory was actually created
+                        if (!Directory.Exists(finalDirectory))
+                        {
+                            throw new IOException($"Directory was created but is not accessible: {finalDirectory}\n\nThis may be caused by:\n- OneDrive or cloud sync interference\n- Network drive issues\n- Antivirus blocking access\n\nTry saving to Desktop or Documents folder instead.");
+                        }
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        throw new UnauthorizedAccessException($"No permission to create directory: {finalDirectory}\n\nSolutions:\n1. Use 'Save As' and choose Desktop or Documents\n2. Run as Administrator\n3. Check if this is a OneDrive or network folder", ex);
+                    }
+                    catch (IOException ex)
+                    {
+                        throw new IOException($"Failed to create directory: {finalDirectory}\n\nPossible causes:\n- Path is on a network drive that's unavailable\n- OneDrive or cloud sync is blocking access\n- Invalid path or permissions issue\n\nSolution: Use 'Save As' to save to a local folder like Desktop", ex);
                     }
                     catch (Exception ex)
                     {
-                        throw new IOException($"Failed to create directory: {finalDirectory}", ex);
+                        throw new IOException($"Failed to create directory: {finalDirectory}\n\nError: {ex.Message}\n\nTry saving to a different location (Desktop, Documents)", ex);
+                    }
+                }
+                else
+                {
+                    // Directory exists, verify we can write to it
+                    try
+                    {
+                        string testFile = Path.Combine(finalDirectory, $".test_{Guid.NewGuid()}.tmp");
+                        File.WriteAllText(testFile, "test");
+                        File.Delete(testFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new UnauthorizedAccessException($"Directory exists but cannot write to it: {finalDirectory}\n\nError: {ex.Message}\n\nSolutions:\n1. Check folder permissions\n2. Close any programs accessing this folder\n3. Use 'Save As' to save elsewhere (Desktop)", ex);
                     }
                 }
             }
@@ -155,22 +183,59 @@ namespace JobSearchTracker.Services
                         }
                     }
 
-                    // Check if file is locked by another process
-                    try
+                    // Check if file is locked by another process (with retry)
+                    bool fileLocked = true;
+                    int retryCount = 0;
+                    const int maxRetries = 3;
+
+                    while (fileLocked && retryCount < maxRetries)
                     {
-                        using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                        try
                         {
-                            // File is not locked, close it immediately
+                            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                            {
+                                // File is not locked
+                                fileLocked = false;
+                            }
                         }
-                    }
-                    catch (IOException)
-                    {
-                        throw new IOException($"File is locked by another program: {filePath}\n\nPossible causes:\n- File is open in Excel, Notepad, or another editor\n- Another instance of Job Search Tracker has it open\n- Antivirus is scanning the file\n\nSolution:\n- Close all programs that might have this file open\n- Wait a few seconds and try again\n- Use 'Save As' to save to a different location");
+                        catch (IOException)
+                        {
+                            retryCount++;
+                            if (retryCount >= maxRetries)
+                            {
+                                throw new IOException($"File is locked by another program: {filePath}\n\nPossible causes:\n- File is open in Excel, Notepad, or another editor\n- Another instance of Job Search Tracker has it open\n- Antivirus is scanning the file\n\nSolution:\n- Close all programs that might have this file open\n- Wait a few seconds and try again\n- Use 'Save As' to save to a different location");
+                            }
+                            // Wait before retry
+                            await Task.Delay(100);
+                        }
                     }
                 }
 
                 var json = JsonSerializer.Serialize(project, _jsonOptions);
-                await File.WriteAllTextAsync(filePath, json);
+
+                // Write with explicit stream management and retry logic
+                int writeRetryCount = 0;
+                const int maxWriteRetries = 3;
+                bool writeSuccess = false;
+
+                while (!writeSuccess && writeRetryCount < maxWriteRetries)
+                {
+                    try
+                    {
+                        await File.WriteAllTextAsync(filePath, json);
+                        writeSuccess = true;
+                    }
+                    catch (IOException) when (writeRetryCount < maxWriteRetries - 1)
+                    {
+                        writeRetryCount++;
+                        await Task.Delay(150); // Wait before retry
+                    }
+                }
+
+                if (!writeSuccess)
+                {
+                    throw new IOException($"Failed to write to file after {maxWriteRetries} attempts: {filePath}");
+                }
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -210,7 +275,29 @@ namespace JobSearchTracker.Services
             }
             catch (IOException ex)
             {
-                throw new IOException($"IO error saving to: {filePath}\n\nThis usually means the file is locked by another program.\n\nCheck if the file is open in:\n- Excel\n- Notepad or other text editors\n- Another instance of this application\n- Antivirus software\n\nClose all other programs and try again.", ex);
+                // Provide detailed diagnostic information
+                var diagnosticInfo = $"IO error saving to: {filePath}\n\n";
+                diagnosticInfo += $"Directory: {Path.GetDirectoryName(filePath)}\n";
+                diagnosticInfo += $"File exists: {File.Exists(filePath)}\n";
+                diagnosticInfo += $"Directory exists: {Directory.Exists(Path.GetDirectoryName(filePath))}\n\n";
+
+                diagnosticInfo += "Common causes:\n";
+                diagnosticInfo += "- File is open in Excel, Notepad, or another program\n";
+                diagnosticInfo += "- OneDrive or cloud sync is accessing the file\n";
+                diagnosticInfo += "- Antivirus is scanning the file\n";
+                diagnosticInfo += "- Network drive connection issue\n";
+                diagnosticInfo += "- Insufficient disk space\n\n";
+
+                diagnosticInfo += "Solutions:\n";
+                diagnosticInfo += "1. Close ALL programs that might have the file open\n";
+                diagnosticInfo += "2. If path is on OneDrive: Pause OneDrive sync temporarily\n";
+                diagnosticInfo += "3. Try 'Save As' to Desktop or a different local folder\n";
+                diagnosticInfo += "4. Wait 10 seconds and try again\n";
+                diagnosticInfo += "5. Restart the application\n\n";
+
+                diagnosticInfo += $"Technical details: {ex.Message}";
+
+                throw new IOException(diagnosticInfo, ex);
             }
 
             return filePath;

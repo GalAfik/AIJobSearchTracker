@@ -44,6 +44,12 @@ namespace JobSearchTracker.Views
             // Set show intro on startup
             ShowIntroCheckBox.IsChecked = _preferences.ShowIntroOnStartup;
 
+            // Set check for updates
+            CheckForUpdatesCheckBox.IsChecked = _preferences.CheckForUpdates;
+
+            // Set suppress warnings
+            SuppressWarningsCheckBox.IsChecked = _preferences.SuppressWarnings;
+
             // Set auto-save after import
             AutoSaveCheckBox.IsChecked = _preferences.AutoSaveAfterImport;
 
@@ -160,6 +166,12 @@ namespace JobSearchTracker.Views
 
             // Save show intro on startup
             _preferences.ShowIntroOnStartup = ShowIntroCheckBox.IsChecked ?? true;
+
+            // Save check for updates
+            _preferences.CheckForUpdates = CheckForUpdatesCheckBox.IsChecked ?? true;
+
+            // Save suppress warnings
+            _preferences.SuppressWarnings = SuppressWarningsCheckBox.IsChecked ?? false;
 
             // Save auto-save after import
             _preferences.AutoSaveAfterImport = AutoSaveCheckBox.IsChecked ?? false;

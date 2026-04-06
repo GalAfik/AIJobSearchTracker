@@ -62,6 +62,24 @@
                             Display a welcome screen with features and getting started guide each time you launch the application.
                         </TextBlock>
 
+                        <CheckBox x:Name="CheckForUpdatesCheckBox" 
+                                  Content="Check for software updates on startup" 
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,5,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,10" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            Automatically check for new versions when the application starts. A notification will appear if an update is available.
+                        </TextBlock>
+
+                        <CheckBox x:Name="SuppressWarningsCheckBox" 
+                                  Content="Suppress warning messages" 
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,5,0,10"/>
+                        <TextBlock FontWeight="Normal" TextWrapping="Wrap" Margin="0,0,0,10" FontSize="11" Foreground="{DynamicResource SecondaryTextBrush}">
+                            When enabled, informational warning dialogs will not be shown. Critical errors and confirmations will still be displayed.
+                        </TextBlock>
+
                         <TextBlock Text="File Operations:" FontSize="14" Margin="0,20,0,5"/>
                         <CheckBox x:Name="AutoSaveCheckBox" 
                                   Content="Automatically save project after importing files" 

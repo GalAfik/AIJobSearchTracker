@@ -20,6 +20,7 @@ namespace JobSearchTracker.ViewModels
         private readonly CsvService _csvService;
         private readonly EmailService _emailService;
         private readonly DirectionsService _directionsService;
+        private readonly PreferencesService _preferencesService;
 
         private JobSearchProject? _currentProject;
         private string? _currentFilePath;
@@ -84,6 +85,7 @@ namespace JobSearchTracker.ViewModels
             _csvService = new CsvService();
             _emailService = new EmailService();
             _directionsService = new DirectionsService();
+            _preferencesService = new PreferencesService();
 
             Jobs = new ObservableCollection<JobViewModel>();
             FilteredJobs = new ObservableCollection<JobViewModel>();
@@ -99,6 +101,7 @@ namespace JobSearchTracker.ViewModels
             SaveProjectAsCommand = new RelayCommand(_ => SaveProjectAs(), _ => _currentProject != null);
             ExportToExcelCommand = new RelayCommand(_ => ExportToExcel(), _ => _currentProject != null);
             ExportToCsvCommand = new RelayCommand(_ => ExportToCsv(), _ => _currentProject != null);
+            ExportUnemploymentReportCommand = new RelayCommand(_ => ExportUnemploymentReport(), _ => _currentProject != null && _currentProject.Jobs.Any());
             AddJobCommand = new RelayCommand(_ => AddJob(), _ => _currentProject != null);
             AddJobFromUrlCommand = new RelayCommand(_ => AddJobFromUrl(), _ => _currentProject != null);
             EditJobCommand = new RelayCommand(_ => EditJob(), _ => SelectedJob != null);
@@ -158,6 +161,10 @@ namespace JobSearchTracker.ViewModels
                 if (SetProperty(ref _statusFilterText, value))
                 {
                     ApplyFilter();
+
+                    // Save the preference
+                    UserPreferences.LastStatusFilter = value;
+                    _ = SavePreferencesAsync();
                 }
             }
         }
@@ -170,6 +177,10 @@ namespace JobSearchTracker.ViewModels
                 if (SetProperty(ref _currentSortOption, value))
                 {
                     ApplyFilter();
+
+                    // Save the preference
+                    UserPreferences.DefaultSortBy = value;
+                    _ = SavePreferencesAsync();
                 }
             }
         }
@@ -185,6 +196,7 @@ namespace JobSearchTracker.ViewModels
         public RelayCommand SaveProjectAsCommand { get; }
         public RelayCommand ExportToExcelCommand { get; }
         public RelayCommand ExportToCsvCommand { get; }
+        public RelayCommand ExportUnemploymentReportCommand { get; }
         public RelayCommand AddJobCommand { get; }
         public RelayCommand AddJobFromUrlCommand { get; }
         public RelayCommand EditJobCommand { get; }
@@ -216,6 +228,22 @@ namespace JobSearchTracker.ViewModels
 
         private async void LoadProject()
         {
+            // Check if we need to show confirmation (only if project already loaded)
+            bool needsConfirmation = _currentProject != null && Jobs.Count > 0;
+
+            if (needsConfirmation)
+            {
+                var result = MessageBox.Show(
+                    "You have a project currently open. Do you want to close it and open a different one?",
+                    "Open Different Project?",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (result != MessageBoxResult.Yes)
+                    return;
+            }
+
             var dialog = new OpenFileDialog
             {
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
@@ -224,20 +252,95 @@ namespace JobSearchTracker.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                try
-                {
-                    _currentProject = await _projectService.LoadProjectAsync(dialog.FileName);
-                    _currentFilePath = dialog.FileName;
+                await LoadProjectFromFileAsync(dialog.FileName, showSuccessMessage: true);
+            }
+        }
 
-                    LoadProjectIntoViewModel(_currentProject);
+        /// <summary>
+        /// Loads a project from a file path without showing a dialog.
+        /// </summary>
+        /// <param name="filePath">The path to the project file.</param>
+        /// <param name="showSuccessMessage">Whether to show a success message after loading.</param>
+        /// <returns>True if the project was loaded successfully, false otherwise.</returns>
+        public async Task<bool> LoadProjectFromFileAsync(string filePath, bool showSuccessMessage = false)
+        {
+            // Validate file path
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
 
-                    HasUnsavedChanges = false;
-                    MessageBox.Show($"Project '{_currentProject.Name}' loaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
+            if (!File.Exists(filePath))
+            {
+                if (showSuccessMessage) // Only show error if user initiated the load
                 {
-                    MessageBox.Show($"Failed to load project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        $"File not found: {filePath}",
+                        "File Not Found",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning
+                    );
                 }
+                return false;
+            }
+
+            // Check if file is readable
+            try
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    // File is readable, close immediately
+                }
+            }
+            catch (Exception ex)
+            {
+                if (showSuccessMessage)
+                {
+                    MessageBox.Show(
+                        $"Cannot read file: {filePath}\n\nError: {ex.Message}",
+                        "File Access Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+                return false;
+            }
+
+            // Try to load the project
+            try
+            {
+                _currentProject = await _projectService.LoadProjectAsync(filePath);
+                _currentFilePath = filePath;
+
+                LoadProjectIntoViewModel(_currentProject);
+
+                HasUnsavedChanges = false;
+
+                // Update last opened file path in preferences
+                UserPreferences.LastOpenedFilePath = filePath;
+
+                if (showSuccessMessage)
+                {
+                    MessageBox.Show(
+                        $"Project '{_currentProject.Name}' loaded successfully!",
+                        "Success",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (showSuccessMessage)
+                {
+                    MessageBox.Show(
+                        $"Failed to load project: {ex.Message}",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+                return false;
             }
         }
 
@@ -277,8 +380,16 @@ namespace JobSearchTracker.ViewModels
             {
                 SyncJobsToProject();
                 _currentFilePath = await _projectService.SaveProjectAsync(_currentProject, _currentFilePath);
+
+                // Update last opened file path
+                UserPreferences.LastOpenedFilePath = _currentFilePath;
+
                 HasUnsavedChanges = false;
-                MessageBox.Show("Project saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                if (!UserPreferences.SuppressWarnings)
+                {
+                    MessageBox.Show("Project saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -314,8 +425,16 @@ namespace JobSearchTracker.ViewModels
                     SyncJobsToProject();
                     var selectedPath = dialog.FileName;
                     _currentFilePath = await _projectService.SaveProjectAsync(_currentProject, selectedPath);
+
+                    // Update last opened file path
+                    UserPreferences.LastOpenedFilePath = _currentFilePath;
+
                     HasUnsavedChanges = false;
-                    MessageBox.Show($"Project saved successfully!\n\nSaved to: {_currentFilePath}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    if (!UserPreferences.SuppressWarnings)
+                    {
+                        MessageBox.Show($"Project saved successfully!\n\nSaved to: {_currentFilePath}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -343,7 +462,11 @@ namespace JobSearchTracker.ViewModels
                 {
                     SyncJobsToProject();
                     _exportService.ExportToExcel(_currentProject, dialog.FileName);
-                    MessageBox.Show("Data exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    if (!UserPreferences.SuppressWarnings)
+                    {
+                        MessageBox.Show("Data exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -370,11 +493,62 @@ namespace JobSearchTracker.ViewModels
                 {
                     SyncJobsToProject();
                     _csvService.ExportToCsv(_currentProject, dialog.FileName);
-                    MessageBox.Show("Data exported to CSV successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    if (!UserPreferences.SuppressWarnings)
+                    {
+                        MessageBox.Show("Data exported to CSV successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Failed to export data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void ExportUnemploymentReport()
+        {
+            if (_currentProject == null)
+                return;
+
+            // Filter jobs applied within last 7 days
+            var sevenDaysAgo = DateTime.Now.AddDays(-7);
+            var recentAppliedJobs = _currentProject.Jobs
+                .Where(j => j.DateApplied.HasValue && 
+                            j.DateApplied.Value >= sevenDaysAgo &&
+                            j.Status == JobStatus.Applied)
+                .OrderByDescending(j => j.DateApplied)
+                .ToList();
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                FileName = $"{_currentProject.Name}_Unemployment_Report_{DateTime.Now:yyyy-MM-dd}.xlsx"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    _exportService.ExportUnemploymentReport(recentAppliedJobs, dialog.FileName);
+
+                    if (!UserPreferences.SuppressWarnings)
+                    {
+                        MessageBox.Show(
+                            $"Unemployment report exported successfully!\n\n{recentAppliedJobs.Count} job(s) from the last 7 days.",
+                            "Success",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Failed to export unemployment report: {ex.Message}",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }
@@ -416,7 +590,11 @@ namespace JobSearchTracker.ViewModels
 
                         HasUnsavedChanges = true;
                         ApplyFilter();
-                        MessageBox.Show($"Successfully imported {importedCount} jobs from CSV into the current project!\n\nTotal jobs in project: {_currentProject.Jobs.Count}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        if (!UserPreferences.SuppressWarnings)
+                        {
+                            MessageBox.Show($"Successfully imported {importedCount} jobs from CSV into the current project!\n\nTotal jobs in project: {_currentProject.Jobs.Count}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
 
                         // Auto-save if preference is enabled
                         if (UserPreferences.AutoSaveAfterImport && _currentFilePath != null)
@@ -426,7 +604,11 @@ namespace JobSearchTracker.ViewModels
                                 SyncJobsToProject();
                                 await _projectService.SaveProjectAsync(_currentProject, _currentFilePath);
                                 HasUnsavedChanges = false;
-                                MessageBox.Show("Project auto-saved successfully!", "Auto-Save", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                                if (!UserPreferences.SuppressWarnings)
+                                {
+                                    MessageBox.Show("Project auto-saved successfully!", "Auto-Save", MessageBoxButton.OK, MessageBoxImage.Information);
+                                }
                             }
                             catch (Exception saveEx)
                             {
@@ -684,6 +866,21 @@ namespace JobSearchTracker.ViewModels
             {
                 // User cancelled
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Saves user preferences asynchronously. Silently fails if save fails.
+        /// </summary>
+        private async Task SavePreferencesAsync()
+        {
+            try
+            {
+                await _preferencesService.SavePreferencesAsync(UserPreferences);
+            }
+            catch
+            {
+                // Silently fail - don't interrupt user experience for preference save failures
             }
         }
 

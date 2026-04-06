@@ -71,6 +71,11 @@ namespace JobSearchTracker.Models
         public string DefaultSortBy { get; set; } = "Date Added (Newest)";
 
         /// <summary>
+        /// Gets or sets the last used status filter.
+        /// </summary>
+        public string LastStatusFilter { get; set; } = "All";
+
+        /// <summary>
         /// Gets or sets the Claude API key.
         /// </summary>
         public string ClaudeApiKey { get; set; } = string.Empty;
@@ -110,5 +115,22 @@ namespace JobSearchTracker.Models
         /// Gets or sets whether to automatically save the project after importing files.
         /// </summary>
         public bool AutoSaveAfterImport { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the path to the last opened project file.
+        /// Used to automatically reopen the last project on startup.
+        /// </summary>
+        public string LastOpenedFilePath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets whether to check for software updates on startup.
+        /// </summary>
+        public bool CheckForUpdates { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether to suppress warning messages throughout the application.
+        /// When enabled, warning dialogs for operations like opening projects, saving, exporting, etc. will not be shown.
+        /// </summary>
+        public bool SuppressWarnings { get; set; } = false;
     }
 }
